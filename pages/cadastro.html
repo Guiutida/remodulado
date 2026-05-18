@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar conta | DuoPratic</title>
+    <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body class="fundo-formulario">
+    <main class="acesso">
+        <section class="card-acesso">
+            <a class="marca marca-central" href="../index.html">
+                <span class="logo">✓</span>
+                <strong>Duo<span>Pratic</span></strong>
+            </a>
+
+            <h1>Criar conta</h1>
+            <p>Comece uma trilha de estudo com prática orientada e apoio da IA.</p>
+
+            <form class="formulario">
+                <div class="campo">
+                    <label for="nome">Nome</label>
+                    <input id="nome" name="nome" type="text" placeholder="Seu nome" required>
+                </div>
+
+                <div class="campo">
+                    <label for="email">E-mail</label>
+                    <input id="email" name="email" type="email" placeholder="voce@email.com" required>
+                </div>
+
+                <div class="campo">
+                    <label for="perfil">Perfil</label>
+                    <select id="perfil" name="perfil" required>
+                        <option value="">Selecione</option>
+                        <option value="aluno">Aluno</option>
+                        <option value="professor">Professor</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="senha">Senha</label>
+                    <input id="senha" name="senha" type="password" placeholder="Crie uma senha" required>
+                </div>
+
+                <button class="botao" type="submit">Cadastrar</button>
+            </form>
+
+            <p class="troca-formulario">Já tem conta? <a href="login.html">Entrar</a></p>
+            <a class="voltar-inicio" href="../index.html">Voltar para o início</a>
+        </section>
+    </main>
+</body>
+</html>
