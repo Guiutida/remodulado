@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações | DuoPratic</title>
+    <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body class="area-aluno">
+    <aside class="barra-aluno">
+        <a class="marca" href="../index.html">
+            <img class="logo" src="../assets/img/logo-duoPratic-icone.png" alt="Logo DuoPratic">
+            <strong>Duo<span>Pratic</span></strong>
+        </a>
+        <nav>
+            <a href="aluno.html">Início</a>
+            <a href="#">Minhas trilhas</a>
+            <a href="#">Atividades</a>
+            <a href="#">IA de estudo</a>
+            <a href="#">Turma</a>
+        </nav>
+    </aside>
+
+    <main class="painel-aluno pagina-config">
+        <header class="cabecalho-aluno">
+            <div>
+                <span>Conta do aluno</span>
+                <h1>Configurações</h1>
+            </div>
+            <div class="acoes-aluno">
+                <a class="icone-topo ativo" href="configuracoes.html" aria-label="Configurações">⚙</a>
+                <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">🔔</button>
+                <div class="perfil-menu">
+                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
+                    <div class="menu-perfil" data-painel="perfil">
+                        <div class="perfil-resumo">
+                            <span class="avatar-mini">G</span>
+                            <div>
+                                <strong data-nome-usuario>Guilherme</strong>
+                                <small>Versão gratuita</small>
+                                <button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>⌄</button>
+                            </div>
+                        </div>
+                        <div class="status-menu" data-status-menu>
+                            <button type="button" data-status="Online"><span class="online"></span>Online</button>
+                            <button type="button" data-status="Ausente"><span class="ausente"></span>Ausente</button>
+                            <button type="button" data-status="Ocupado"><span class="ocupado"></span>Ocupado</button>
+                            <button type="button" data-status="Offline"><span class="offline"></span>Mostrar como offline</button>
+                        </div>
+                        <a href="#">Meu perfil</a>
+                        <a href="#">Minha turma</a>
+                        <a href="configuracoes.html">Configurações</a>
+                        <a href="#">Ajuda</a>
+                        <a href="../index.html">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="config-layout">
+            <nav class="menu-config" aria-label="Seções de configurações">
+                <a class="ativo" href="#conta">Conta</a>
+                <a href="#preferencias">Preferências</a>
+                <a href="#estudo">Estudo</a>
+                <a href="#seguranca">Segurança</a>
+            </nav>
+
+            <div class="lista-config">
+                <section class="cartao-painel bloco-config" id="conta">
+                    <div class="titulo-config">
+                        <span>Conta</span>
+                        <h2>Dados principais</h2>
+                    </div>
+                    <div class="item-config item-foto">
+                        <div>
+                            <strong>Foto do perfil</strong>
+                            <p>Ajuda professores e colegas a reconhecerem você.</p>
+                        </div>
+                        <button class="avatar-mini" type="button" data-foto-perfil>G</button>
+                        <input class="input-foto" type="file" accept="image/*" data-input-foto>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Nome</strong>
+                            <p>Nome exibido dentro da plataforma.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="nome" data-padrao="Guilherme Utida">Guilherme Utida</button>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>E-mail</strong>
+                            <p>Usado para entrar na conta.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="email" data-padrao="guiutida@gmail.com">guiutida@gmail.com</button>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Perfil</strong>
+                            <p>Define o tipo de acesso no DuoPratic.</p>
+                        </div>
+                        <em>Aluno</em>
+                    </div>
+                </section>
+
+                <section class="cartao-painel bloco-config" id="preferencias">
+                    <div class="titulo-config">
+                        <span>Preferências</span>
+                        <h2>Como a plataforma avisa você</h2>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Tema</strong>
+                            <p>Aparência usada nas telas do aluno.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="tema" data-padrao="Claro" data-opcoes="Claro|Escuro">Claro</button>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Notificações da turma</strong>
+                            <p>Atividades, avisos e mensagens do professor.</p>
+                        </div>
+                        <button class="toggle ligado" type="button" data-config-toggle="notificacoes" aria-label="Ativar notificações"></button>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Lembretes de estudo</strong>
+                            <p>Frequência dos avisos para manter a rotina.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="lembretes" data-padrao="Diários" data-opcoes="Diários|Semanais|Desativados">Diários</button>
+                    </div>
+                </section>
+
+                <section class="cartao-painel bloco-config" id="estudo">
+                    <div class="titulo-config">
+                        <span>Estudo</span>
+                        <h2>Rotina de aprendizagem</h2>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Disciplina principal</strong>
+                            <p>Base usada para sugerir a trilha inicial.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="disciplina" data-padrao="Matemática" data-opcoes="Matemática|Português|Ciências|História">Matemática</button>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Ritmo semanal</strong>
+                            <p>Meta de atividades para a semana.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="ritmo" data-padrao="5 atividades" data-opcoes="3 atividades|5 atividades|7 atividades|10 atividades">5 atividades</button>
+                    </div>
+                </section>
+
+                <section class="cartao-painel bloco-config" id="seguranca">
+                    <div class="titulo-config">
+                        <span>Segurança</span>
+                        <h2>Acesso e senha</h2>
+                    </div>
+                    <div class="item-config">
+                        <div>
+                            <strong>Senha</strong>
+                            <p>Mantenha sua conta protegida.</p>
+                        </div>
+                        <button class="valor-config" type="button" data-config="senha" data-padrao="********">********</button>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <div class="fundo-painel" data-fechar></div>
+
+    <div class="modal-foto" data-modal-foto aria-label="Alterar foto do perfil">
+        <div class="janela-foto">
+            <header>
+                <h2>Alterar foto do perfil</h2>
+                <button type="button" data-fechar-foto aria-label="Fechar">×</button>
+            </header>
+
+            <p data-texto-foto>A foto do perfil deve ser um arquivo JPG, JPEG, GIF ou PNG com menos de 5 MB.</p>
+
+            <div class="area-upload" data-area-upload>
+                <strong>Arraste e solte arquivos aqui</strong>
+                <span>ou</span>
+                <button class="botao" type="button" data-escolher-foto>Escolha um arquivo</button>
+            </div>
+
+            <div class="area-corte" data-area-corte>
+                <div class="preview-foto">
+                    <img src="" alt="Prévia da foto do perfil" data-preview-foto>
+                    <span></span>
+                </div>
+                <div class="acoes-foto">
+                    <button type="button" data-excluir-foto>Excluir</button>
+                    <button type="button" data-alterar-foto>Alterar foto</button>
+                </div>
+            </div>
+
+            <footer>
+                <button type="button" data-cancelar-foto>Cancelar</button>
+                <button class="botao" type="button" data-salvar-foto disabled>Salvar</button>
+            </footer>
+        </div>
+    </div>
+
+    <aside class="painel-lateral" data-painel="notificacoes" aria-label="Notificações">
+        <header>
+            <div>
+                <h2>Notificações</h2>
+                <span>Não lidas</span>
+            </div>
+            <button type="button" data-fechar aria-label="Fechar">×</button>
+        </header>
+
+        <section class="lista-notificacoes">
+            <article>
+                <strong>Nova atividade adicionada</strong>
+                <p>Prof. Ana enviou uma atividade de funções do 1º grau.</p>
+                <span>Agora</span>
+            </article>
+            <article>
+                <strong>Aviso da turma</strong>
+                <p>A revisão de Matemática foi marcada para sexta-feira.</p>
+                <span>Hoje</span>
+            </article>
+            <article>
+                <strong>Mensagem do professor</strong>
+                <p>Confira o comentário na sua última resposta.</p>
+                <span>Ontem</span>
+            </article>
+        </section>
+    </aside>
+
+    <script src="../assets/js/aluno.js"></script>
+</body>
+</html>
