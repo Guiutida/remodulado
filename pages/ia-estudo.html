@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA de estudo | DuoPratic</title>
+    <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body class="area-aluno">
+    <aside class="barra-aluno">
+        <a class="marca" href="../index.html"><img class="logo" src="../assets/img/logo-duoPratic-icone.png" alt="Logo DuoPratic"><strong>Duo<span>Pratic</span></strong></a>
+        <nav>
+            <a href="aluno.html">Início</a>
+            <a href="trilhas.html">Minhas trilhas</a>
+            <a href="atividades.html">Atividades</a>
+            <a class="ativo" href="ia-estudo.html">IA de estudo</a>
+            <a href="turma.html">Turma</a>
+        </nav>
+    </aside>
+
+    <main class="painel-aluno">
+        <header class="cabecalho-aluno">
+            <div><span>Apoio inteligente</span><h1>IA de estudo.</h1></div>
+            <div class="acoes-aluno">
+                <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
+                <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
+                <div class="perfil-menu">
+                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
+                    <div class="menu-perfil" data-painel="perfil">
+                        <div class="perfil-resumo"><span class="avatar-mini">G</span><div><strong data-nome-usuario>Guilherme</strong><small>Versão gratuita</small><button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button></div></div>
+                        <div class="status-menu" data-status-menu>
+                            <button type="button" data-status="Online"><span class="online"></span>Online</button><button type="button" data-status="Ausente"><span class="ausente"></span>Ausente</button><button type="button" data-status="Ocupado"><span class="ocupado"></span>Ocupado</button><button type="button" data-status="Offline"><span class="offline"></span>Mostrar como offline</button>
+                        </div>
+                        <a href="configuracoes.html">Meu perfil</a><a href="turma.html">Minha turma</a><a href="configuracoes.html">Configurações</a><a href="#">Ajuda</a><a href="../index.html">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="cartao-painel">
+            <span>Explique com suas palavras</span>
+            <h2>Antes da resposta pronta, organize seu pensamento.</h2>
+            <p>Use este espaço para escrever uma dúvida, pedir uma dica ou revisar onde errou.</p>
+            <textarea class="campo-ia" placeholder="Exemplo: não entendi por que y aumenta quando x aumenta."></textarea>
+            <div class="chips-ia">
+                <button type="button">Pedir dica</button>
+                <button type="button">Explicar meu erro</button>
+                <button type="button">Criar exemplo parecido</button>
+            </div>
+        </section>
+
+        <section class="grade-pagina">
+            <article class="cartao-painel">
+                <h2>Modelos rápidos</h2>
+                <div class="lista-pagina">
+                    <div class="cartao-linha"><strong>Não me dê a resposta</strong><p>Peça uma pista e tente resolver primeiro.</p></div>
+                    <div class="cartao-linha"><strong>Compare caminhos</strong><p>Veja duas formas de pensar no mesmo problema.</p></div>
+                </div>
+            </article>
+            <article class="cartao-painel">
+                <h2>Uso recomendado</h2>
+                <div class="lista-acoes">
+                    <p><strong>1. Tente sozinho</strong><span>2 min</span></p>
+                    <p><strong>2. Peça uma dica</strong><span>curta</span></p>
+                    <p><strong>3. Explique o raciocínio</strong><span>final</span></p>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <div class="fundo-painel" data-fechar></div>
+    <aside class="painel-lateral" data-painel="notificacoes" aria-label="Notificações">
+        <header><div><h2>Notificações</h2><span>Não lidas</span></div><button type="button" data-fechar aria-label="Fechar">&times;</button></header>
+        <section class="lista-notificacoes">
+            <article><strong>Nova atividade adicionada</strong><p>Prof. Ana enviou uma atividade de funções do 1º grau.</p><span>Agora</span></article>
+            <article><strong>Aviso da turma</strong><p>A revisão de Matemática foi marcada para sexta-feira.</p><span>Hoje</span></article>
+            <article><strong>Mensagem do professor</strong><p>Confira o comentário na sua última resposta.</p><span>Ontem</span></article>
+        </section>
+    </aside>
+    <script src="../assets/js/aluno.js"></script>
+</body>
+</html>

@@ -13,11 +13,11 @@
             <strong>Duo<span>Pratic</span></strong>
         </a>
         <nav>
-            <a class="ativo" href="#">Início</a>
-            <a href="#">Minhas trilhas</a>
-            <a href="#">Atividades</a>
-            <a href="#">IA de estudo</a>
-            <a href="#">Turma</a>
+            <a class="ativo" href="aluno.html">Início</a>
+            <a href="trilhas.html">Minhas trilhas</a>
+            <a href="atividades.html">Atividades</a>
+            <a href="ia-estudo.html">IA de estudo</a>
+            <a href="turma.html">Turma</a>
         </nav>
     </aside>
 
@@ -28,8 +28,8 @@
                 <h1>Seu plano de hoje.</h1>
             </div>
             <div class="acoes-aluno">
-                <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">⚙</a>
-                <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">🔔</button>
+                <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
+                <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
                 <div class="perfil-menu">
                     <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
                     <div class="menu-perfil" data-painel="perfil">
@@ -38,7 +38,7 @@
                             <div>
                                 <strong data-nome-usuario>Guilherme</strong>
                                 <small>Versão gratuita</small>
-                                <button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>⌄</button>
+                                <button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button>
                             </div>
                         </div>
                         <div class="status-menu" data-status-menu>
@@ -47,8 +47,8 @@
                             <button type="button" data-status="Ocupado"><span class="ocupado"></span>Ocupado</button>
                             <button type="button" data-status="Offline"><span class="offline"></span>Mostrar como offline</button>
                         </div>
-                        <a href="#">Meu perfil</a>
-                        <a href="#">Minha turma</a>
+                        <a href="configuracoes.html">Meu perfil</a>
+                        <a href="turma.html">Minha turma</a>
                         <a href="configuracoes.html">Configurações</a>
                         <a href="#">Ajuda</a>
                         <a href="../index.html">Sair</a>
@@ -61,9 +61,9 @@
             <article class="cartao-painel destaque-aluno">
                 <span>Continuar de onde parou</span>
                 <h2>Funções do 1º grau</h2>
-                <p>Próxima etapa: exercício guiado. Resolva uma questão e explique seu raciocínio antes de ver a dica da IA.</p>
+                <p>Próxima etapa: exercício guiado. Resolva uma questão curta e explique seu raciocínio.</p>
                 <div class="barra"><span style="width: 72%"></span></div>
-                <a class="botao" href="#">Começar atividade</a>
+                <a class="botao" href="estudo.html">Começar atividade</a>
             </article>
 
             <div class="indicadores-aluno">
@@ -74,10 +74,10 @@
         </section>
 
         <section class="grade-dashboard">
-            <article class="cartao-painel bloco-hoje">
+            <article class="cartao-painel">
                 <div class="linha-titulo">
                     <h2>Hoje</h2>
-                    <a href="#">Ver atividades</a>
+                    <a href="atividades.html">Ver atividades</a>
                 </div>
                 <div class="lista-acoes">
                     <p><strong>Exercício guiado</strong><span>Funções do 1º grau</span></p>
@@ -88,7 +88,7 @@
 
             <article class="cartao-painel ia-aluno">
                 <h2>IA de estudo</h2>
-                <p>Use a IA para pensar melhor antes de confirmar uma resposta.</p>
+                <p>Use a IA para organizar ideias antes de confirmar uma resposta.</p>
                 <div class="chips-ia">
                     <button type="button">Pedir dica</button>
                     <button type="button">Explicar erro</button>
@@ -97,17 +97,20 @@
             </article>
 
             <article class="cartao-painel">
-                <h2>Turma</h2>
+                <div class="linha-titulo">
+                    <h2>Turma</h2>
+                    <a href="turma.html">Abrir</a>
+                </div>
                 <div class="lista-acoes">
                     <p><strong>Aviso do professor</strong><span>Revisão sexta-feira</span></p>
                     <p><strong>Próxima entrega</strong><span>Atividade de Matemática</span></p>
                 </div>
             </article>
 
-            <article class="cartao-painel caminho-trilha">
+            <article class="cartao-painel">
                 <div class="linha-titulo">
                     <h2>Caminho da trilha</h2>
-                    <a href="#">Ver completa</a>
+                    <a href="trilhas.html">Ver completa</a>
                 </div>
                 <div class="etapas-trilha">
                     <span class="feito">Base</span>
@@ -127,7 +130,7 @@
                 <h2>Notificações</h2>
                 <span>Não lidas</span>
             </div>
-            <button type="button" data-fechar aria-label="Fechar">×</button>
+            <button type="button" data-fechar aria-label="Fechar">&times;</button>
         </header>
 
         <section class="lista-notificacoes">

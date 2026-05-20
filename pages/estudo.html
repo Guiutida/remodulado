@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudo | DuoPratic</title>
+    <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body class="area-aluno">
+    <aside class="barra-aluno">
+        <a class="marca" href="../index.html"><img class="logo" src="../assets/img/logo-duoPratic-icone.png" alt="Logo DuoPratic"><strong>Duo<span>Pratic</span></strong></a>
+        <nav>
+            <a href="aluno.html">Início</a>
+            <a class="ativo" href="trilhas.html">Minhas trilhas</a>
+            <a href="atividades.html">Atividades</a>
+            <a href="ia-estudo.html">IA de estudo</a>
+            <a href="turma.html">Turma</a>
+        </nav>
+    </aside>
+
+    <main class="painel-aluno">
+        <header class="cabecalho-aluno">
+            <div><span>Matemática</span><h1>Funções do 1º grau.</h1></div>
+            <div class="acoes-aluno">
+                <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
+                <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
+                <div class="perfil-menu">
+                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
+                    <div class="menu-perfil" data-painel="perfil">
+                        <div class="perfil-resumo"><span class="avatar-mini">G</span><div><strong data-nome-usuario>Guilherme</strong><small>Versão gratuita</small><button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button></div></div>
+                        <div class="status-menu" data-status-menu>
+                            <button type="button" data-status="Online"><span class="online"></span>Online</button>
+                            <button type="button" data-status="Ausente"><span class="ausente"></span>Ausente</button>
+                            <button type="button" data-status="Ocupado"><span class="ocupado"></span>Ocupado</button>
+                            <button type="button" data-status="Offline"><span class="offline"></span>Mostrar como offline</button>
+                        </div>
+                        <a href="configuracoes.html">Meu perfil</a><a href="turma.html">Minha turma</a><a href="configuracoes.html">Configurações</a><a href="#">Ajuda</a><a href="../index.html">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="tela-estudo">
+            <div class="progresso-estudo" data-etapas-estudo>
+                <span class="feito">Base</span>
+                <span class="ativo">Prática</span>
+                <span>Revisão</span>
+                <span>Conclusão</span>
+            </div>
+
+            <article class="cartao-painel aula">
+                <span data-etapa-texto>Etapa 2 de 4</span>
+                <h2 data-aula-titulo>Entenda a ideia</h2>
+                <p data-aula-texto>Em uma função do 1º grau, o valor de <strong>y</strong> muda conforme o valor de <strong>x</strong>. Na função <strong>y = 2x + 4</strong>, cada aumento em x faz y crescer duas vezes mais.</p>
+                <div class="exemplo-aula">
+                    <span>x = 1</span><strong>y = 6</strong>
+                    <span>x = 2</span><strong>y = 8</strong>
+                    <span>x = 3</span><strong>y = 10</strong>
+                </div>
+            </article>
+
+            <article class="cartao-painel exercicio-aula">
+                <span data-bloco-estudo>Exercício guiado</span>
+                <h2 data-pergunta-estudo>Se x aumenta, o que acontece com y?</h2>
+                <div class="opcoes-estudo">
+                    <button type="button">Aumenta</button>
+                    <button type="button">Diminui</button>
+                    <button type="button">Não muda</button>
+                </div>
+                <label class="campo">
+                    <span data-label-resposta>Explique seu raciocínio</span>
+                    <textarea class="campo-ia" placeholder="Escreva com suas palavras por que escolheu essa resposta."></textarea>
+                </label>
+                <div class="orientacao-ia">
+                    <strong>IA de estudo</strong>
+                    <p data-texto-ia>Depois da sua explicação, a IA pode mostrar outro caminho para pensar no problema, sem entregar apenas a resposta.</p>
+                </div>
+                <div class="proximo-estudo">
+                    <strong>Próximo passo</strong>
+                    <p data-proximo-estudo>Concluir esta etapa libera uma revisão curta para fixar o conteúdo.</p>
+                </div>
+                <div class="acoes">
+                    <a class="botao botao-claro" href="trilhas.html">Voltar</a>
+                    <button class="botao" type="button" data-concluir-estudo>Concluir etapa</button>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <div class="fundo-painel" data-fechar></div>
+    <aside class="painel-lateral" data-painel="notificacoes" aria-label="Notificações">
+        <header><div><h2>Notificações</h2><span>Não lidas</span></div><button type="button" data-fechar aria-label="Fechar">&times;</button></header>
+        <section class="lista-notificacoes">
+            <article><strong>Nova atividade adicionada</strong><p>Prof. Ana enviou uma atividade de funções do 1º grau.</p><span>Agora</span></article>
+            <article><strong>Aviso da turma</strong><p>A revisão de Matemática foi marcada para sexta-feira.</p><span>Hoje</span></article>
+            <article><strong>Mensagem do professor</strong><p>Confira o comentário na sua última resposta.</p><span>Ontem</span></article>
+        </section>
+    </aside>
+    <script src="../assets/js/aluno.js"></script>
+</body>
+</html>

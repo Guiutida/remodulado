@@ -20,10 +20,14 @@ function aplicarTema() {
 
 function aplicarFotoPerfil() {
     const foto = buscarConfig("foto", "");
+    const inicial = primeiroNome(buscarConfig("nome", "Guilherme")).charAt(0).toUpperCase();
 
     document.querySelectorAll(".avatar-aluno, .avatar-mini").forEach((avatar) => {
         avatar.classList.toggle("com-foto", !!foto);
         avatar.style.backgroundImage = foto ? `url(${foto})` : "";
+        if (!foto) {
+            avatar.childNodes[0].nodeValue = inicial;
+        }
     });
 }
 
@@ -43,6 +47,8 @@ function aplicarNomeUsuario() {
             campo.textContent = `Bom estudo, ${primeiroNome(nome)}`;
         }
     });
+
+    aplicarFotoPerfil();
 }
 
 function aplicarStatus() {
@@ -62,10 +68,52 @@ aplicarTema();
 aplicarFotoPerfil();
 aplicarNomeUsuario();
 aplicarStatus();
+aplicarProgressoFuncoes();
+
+function aplicarProgressoFuncoes() {
+    const concluido = buscarConfig("funcoes_concluida", "false") === "true";
+
+    if (!concluido) return;
+
+    document.querySelectorAll(".destaque-aluno, .cartao-destaque-pequeno").forEach((card) => {
+        const titulo = card.querySelector("h2");
+        if (!titulo || !titulo.textContent.includes("Fun")) return;
+
+        const texto = card.querySelector("p");
+        const barra = card.querySelector(".barra span");
+        const botao = card.querySelector(".botao");
+
+        if (texto) texto.textContent = "Etapa concluída. A próxima atividade já pode ser iniciada pela trilha.";
+        if (barra) barra.style.width = "85%";
+        if (botao) botao.textContent = "Continuar trilha";
+    });
+
+    document.querySelectorAll(".indicadores-aluno .cartao-painel").forEach((card) => {
+        if (card.textContent.includes("Progresso")) {
+            const valor = card.querySelector("strong");
+            if (valor) valor.textContent = "85%";
+        }
+    });
+
+    document.querySelectorAll(".etiqueta").forEach((etiqueta) => {
+        if (etiqueta.textContent.trim() === "72%") {
+            etiqueta.textContent = "85%";
+        }
+    });
+
+    document.querySelectorAll(".etapas-trilha").forEach((lista) => {
+        const etapas = lista.querySelectorAll("span");
+        etapas.forEach((etapa, indice) => {
+            etapa.classList.toggle("feito", indice < 3);
+            etapa.classList.toggle("ativo", indice === 3);
+        });
+    });
+}
 
 function fecharPaineis() {
     paineis.forEach((painel) => painel.classList.remove("aberto"));
-    fundo.classList.remove("aberto");
+    document.querySelectorAll("[data-status-menu]").forEach((menu) => menu.classList.remove("aberto"));
+    if (fundo) fundo.classList.remove("aberto");
 }
 
 function abrirPainel(nome) {
@@ -79,7 +127,7 @@ function abrirPainel(nome) {
     if (!jaAberto) {
         painel.classList.add("aberto");
 
-        if (nome !== "perfil") {
+        if (nome !== "perfil" && fundo) {
             fundo.classList.add("aberto");
         }
     }
@@ -329,5 +377,73 @@ document.querySelectorAll("[data-area-upload]").forEach((area) => {
         evento.preventDefault();
         area.classList.remove("arrastando");
         carregarFoto(evento.dataTransfer.files[0]);
+    });
+});
+
+document.querySelectorAll(".opcoes-estudo button").forEach((botao) => {
+    botao.addEventListener("click", () => {
+        botao.parentElement.querySelectorAll("button").forEach((item) => item.classList.remove("selecionado"));
+        botao.classList.add("selecionado");
+    });
+});
+
+let etapaEstudo = 1;
+
+function atualizarEtapaEstudo() {
+    const etapas = document.querySelectorAll("[data-etapas-estudo] span");
+    const etapaTexto = document.querySelector("[data-etapa-texto]");
+    const aulaTitulo = document.querySelector("[data-aula-titulo]");
+    const aulaTexto = document.querySelector("[data-aula-texto]");
+    const bloco = document.querySelector("[data-bloco-estudo]");
+    const pergunta = document.querySelector("[data-pergunta-estudo]");
+    const label = document.querySelector("[data-label-resposta]");
+    const textoIa = document.querySelector("[data-texto-ia]");
+    const proximo = document.querySelector("[data-proximo-estudo]");
+    const botao = document.querySelector("[data-concluir-estudo]");
+
+    if (!etapas.length || !botao) return;
+
+    etapas.forEach((etapa, indice) => {
+        etapa.classList.toggle("feito", indice < etapaEstudo);
+        etapa.classList.toggle("ativo", indice === etapaEstudo);
+    });
+
+    if (etapaEstudo === 2) {
+        etapaTexto.textContent = "Etapa 3 de 4";
+        aulaTitulo.textContent = "Revisão rápida";
+        aulaTexto.innerHTML = "Se o número que multiplica o <strong>x</strong> é positivo, a função cresce. Por isso, em <strong>y = 2x + 4</strong>, quando x aumenta, y também aumenta.";
+        bloco.textContent = "Fixação";
+        pergunta.textContent = "Complete a ideia principal da aula.";
+        label.textContent = "Escreva uma frase curta de revisão";
+        textoIa.textContent = "A IA pode comparar sua explicação com a ideia principal e apontar o que ficou claro ou confuso.";
+        proximo.textContent = "Depois da revisão, a trilha registra a conclusão desta etapa.";
+        botao.textContent = "Finalizar revisão";
+    }
+
+    if (etapaEstudo === 3) {
+        salvarConfig("funcoes_concluida", "true");
+        aplicarProgressoFuncoes();
+        etapaTexto.textContent = "Etapa 4 de 4";
+        aulaTitulo.textContent = "Etapa concluída";
+        aulaTexto.textContent = "Você praticou, explicou seu raciocínio e revisou o conceito principal.";
+        bloco.textContent = "Conclusão";
+        pergunta.textContent = "Bom trabalho. Continue para a próxima atividade quando quiser.";
+        label.textContent = "Anotação opcional";
+        textoIa.textContent = "Na próxima versão, este espaço pode guardar um resumo personalizado do seu desempenho.";
+        proximo.textContent = "Volte para suas trilhas para continuar estudando.";
+        botao.textContent = "Voltar para trilhas";
+    }
+}
+
+document.querySelectorAll("[data-concluir-estudo]").forEach((botao) => {
+    botao.addEventListener("click", () => {
+        if (etapaEstudo === 3) {
+            window.location.href = "trilhas.html";
+            return;
+        }
+
+        etapaEstudo += 1;
+        atualizarEtapaEstudo();
+        mostrarAviso("Etapa atualizada");
     });
 });
