@@ -249,4 +249,160 @@ async function orientar(req, res) {
     }
 }
 
-module.exports = { criarSessao, listarSessoes, getMensagens, orientar };
+// ── Geração de trilha por IA (professor) ─────────────────────────────────────
+
+/**
+ * POST /api/ia/gerar-trilha
+ * Solicita ao Gemini uma trilha estruturada para o tema informado.
+ * Retorna JSON com titulo, descricao, disciplina e etapas — nunca persiste.
+ * A versão final (possivelmente editada) é salva por /api/ia/salvar-trilha.
+ * Body: { tema, nivel, qtdEtapas? }
+ *   nivel: 'fundamental' | 'medio'
+ *   qtdEtapas: número entre 3 e 10 (default 5)
+ */
+async function gerarTrilha(req, res) {
+    try {
+        const { tema, nivel, qtdEtapas } = req.body;
+
+        if (!tema || !nivel) {
+            return res.status(400).json({ status: 'erro', message: 'tema e nivel são obrigatórios.' });
+        }
+
+        if (!['fundamental', 'medio'].includes(nivel)) {
+            return res.status(400).json({ status: 'erro', message: "nivel deve ser 'fundamental' ou 'medio'." });
+        }
+
+        const temaLimpo  = String(tema).trim().slice(0, 200);
+        const qtd        = Math.min(Math.max(parseInt(qtdEtapas, 10) || 5, 3), 10);
+        const nivelTexto = nivel === 'fundamental' ? 'ensino fundamental 2' : 'ensino médio';
+
+        const prompt = `Você é um especialista em design instrucional para ${nivelTexto} brasileiro.
+
+Crie uma trilha de aprendizado completa sobre o tema "${temaLimpo}" voltada para alunos do ${nivelTexto}.
+
+A trilha deve ter exatamente ${qtd} etapas progressivas, da mais básica para a mais avançada.
+
+REGRAS:
+- Cada etapa deve ter 2 a 4 parágrafos de conteúdo explicativo claro e didático.
+- Use linguagem adequada ao ${nivelTexto}: simples e visual para fundamental, mais técnico para médio.
+- As etapas devem ser sequenciais e cada uma deve construir sobre a anterior.
+
+Responda SOMENTE com JSON válido, sem markdown, sem texto fora do JSON:
+{
+  "titulo": "título atrativo da trilha (máximo 80 caracteres)",
+  "descricao": "descrição do que o aluno vai aprender ao concluir (1 ou 2 frases)",
+  "disciplina": "nome da disciplina (ex: Matemática, Português, Ciências, História)",
+  "etapas": [
+    {
+      "titulo": "título da etapa (máximo 80 caracteres)",
+      "conteudo": "texto explicativo completo da etapa (2 a 4 parágrafos)"
+    }
+  ]
+}`;
+
+        const response = await ai.models.generateContent({
+            model: MODELO,
+            contents: [{ role: 'user', parts: [{ text: prompt }] }]
+        });
+
+        const textoResposta = response.text.trim();
+
+        // Remove possível bloco markdown que o modelo às vezes inclui
+        const jsonLimpo = textoResposta
+            .replace(/^```json\s*/i, '')
+            .replace(/^```\s*/i, '')
+            .replace(/```\s*$/i, '')
+            .trim();
+
+        let trilha;
+        try {
+            trilha = JSON.parse(jsonLimpo);
+        } catch {
+            return res.status(500).json({
+                status: 'erro',
+                message: 'IA retornou formato inválido. Tente novamente.'
+            });
+        }
+
+        // Validação mínima da estrutura retornada
+        if (!trilha.titulo || !trilha.disciplina || !Array.isArray(trilha.etapas) || trilha.etapas.length === 0) {
+            return res.status(500).json({
+                status: 'erro',
+                message: 'IA retornou estrutura incompleta. Tente novamente.'
+            });
+        }
+
+        res.json({ status: 'ok', trilha });
+    } catch (erro) {
+        res.status(500).json({ status: 'erro', message: 'Erro ao gerar trilha.', detalhe: erro.message });
+    }
+}
+
+/**
+ * POST /api/ia/salvar-trilha
+ * Persiste a trilha gerada pela IA (possivelmente editada pelo professor).
+ * Body: { turma_id, titulo, descricao?, disciplina, etapas: [{ titulo, conteudo }] }
+ * IDOR: turma_id deve pertencer ao professor logado.
+ */
+async function salvarTrilha(req, res) {
+    try {
+        const professorId = req.usuario.id;
+        const { turma_id, titulo, descricao, disciplina, etapas } = req.body;
+
+        // Validação dos campos obrigatórios
+        if (!turma_id || !titulo || !disciplina || !Array.isArray(etapas) || etapas.length === 0) {
+            return res.status(400).json({
+                status: 'erro',
+                message: 'turma_id, titulo, disciplina e etapas são obrigatórios.'
+            });
+        }
+
+        const turmaId = parseInt(turma_id, 10);
+        if (isNaN(turmaId)) {
+            return res.status(400).json({ status: 'erro', message: 'turma_id inválido.' });
+        }
+
+        // IDOR: a turma deve pertencer ao professor logado
+        const [turmaCheck] = await banco.query(
+            'SELECT id FROM turmas WHERE id = ? AND professor_id = ? LIMIT 1',
+            [turmaId, professorId]
+        );
+        if (!turmaCheck.length) {
+            return res.status(403).json({ status: 'erro', message: 'Turma não encontrada ou acesso negado.' });
+        }
+
+        // Cria a trilha
+        const [trilhaResult] = await banco.query(
+            'INSERT INTO trilhas (turma_id, professor_id, titulo, disciplina, descricao) VALUES (?, ?, ?, ?, ?)',
+            [
+                turmaId,
+                professorId,
+                String(titulo).trim().slice(0, 140),
+                String(disciplina).trim().slice(0, 80),
+                descricao ? String(descricao).trim() : null
+            ]
+        );
+        const trilhaId = trilhaResult.insertId;
+
+        // Insere as etapas em ordem
+        for (let i = 0; i < etapas.length; i++) {
+            const etapa = etapas[i];
+            await banco.query(
+                'INSERT INTO trilha_etapas (trilha_id, ordem, titulo, tipo, conteudo) VALUES (?, ?, ?, ?, ?)',
+                [
+                    trilhaId,
+                    i + 1,
+                    String(etapa.titulo || '').trim().slice(0, 140),
+                    'texto',  // trilhas geradas por IA são sempre tipo texto
+                    String(etapa.conteudo || '').trim()
+                ]
+            );
+        }
+
+        res.status(201).json({ status: 'ok', trilha_id: trilhaId });
+    } catch (erro) {
+        res.status(500).json({ status: 'erro', message: 'Erro ao salvar trilha.', detalhe: erro.message });
+    }
+}
+
+module.exports = { criarSessao, listarSessoes, getMensagens, orientar, gerarTrilha, salvarTrilha };

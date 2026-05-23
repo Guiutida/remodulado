@@ -38,9 +38,9 @@ roteador.get('/sessoes/:id/mensagens',  autenticar, verificarAluno, ia.getMensag
 // iaRateLimit APÓS autenticar e verificarAluno — precisa de req.usuario.id
 roteador.post('/orientar', autenticar, verificarAluno, iaRateLimit, ia.orientar);
 
-// ── Geração de trilha (professor) — implementado em PLAN-04 ──────────────────
-// roteador.post('/gerar-trilha',  autenticar, verificarProfessor, ia.gerarTrilha);
-// roteador.post('/salvar-trilha', autenticar, verificarProfessor, ia.salvarTrilha);
+// ── Geração de trilha (professor) ────────────────────────────────────────────
+roteador.post('/gerar-trilha',  autenticar, verificarProfessor, ia.gerarTrilha);
+roteador.post('/salvar-trilha', autenticar, verificarProfessor, ia.salvarTrilha);
 
 // ── Resumos de desempenho — implementados em PLAN-05 ─────────────────────────
 // roteador.get('/resumo-aluno',           autenticar, verificarAluno,     ia.resumoAluno);
