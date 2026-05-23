@@ -29,10 +29,14 @@
             if (dados.status !== "ok") throw new Error(dados.message);
 
             if (dados.turmas.length) {
-                // Carrega desempenho da primeira turma automaticamente
-                await carregarDesempenho(dados.turmas[0].id, dados.turmas[0].nome);
-                await carregarAtividades();
-            }
+                    const primeiraId = dados.turmas[0].id;
+                    // Carrega desempenho da primeira turma automaticamente
+                    await carregarDesempenho(primeiraId, dados.turmas[0].nome);
+                    await carregarAtividades();
+                    // Carrega análise IA e progresso de trilhas
+                    await carregarResumoIATurma(primeiraId);
+                    await carregarProgressoTrilhas(primeiraId);
+                }
         } catch (erro) {
             mostrarAviso("Erro ao carregar turmas: " + erro.message);
         }
@@ -113,6 +117,102 @@
         } catch (erro) {
             mostrarAviso("Erro ao carregar atividades: " + erro.message);
         }
+    }
+
+    // ── Resumo IA da turma ────────────────────────────────────────────────────
+    async function carregarResumoIATurma(turmaId) {
+        const container = document.getElementById('resumo-ia-turma');
+        if (!container) return;
+
+        container.innerHTML = '<p><em>Gerando análise da turma com IA…</em></p>';
+
+        try {
+            const resp  = await api('/api/ia/resumo-turma/' + turmaId);
+            const dados = await resp.json();
+
+            if (dados.status !== 'ok') {
+                container.innerHTML = '<p><em>Não foi possível gerar a análise agora.</em></p>';
+                return;
+            }
+
+            const { analise } = dados;
+
+            const atencaoHTML = Array.isArray(analise.alunos_atencao) && analise.alunos_atencao.length
+                ? '<ul>' + analise.alunos_atencao.map(a =>
+                    `<li><strong>${escHtmlProf(a.nome)}</strong> — ${escHtmlProf(a.situacao)}</li>`
+                  ).join('') + '</ul>'
+                : '<p><em>Todos os alunos estão com desempenho satisfatório.</em></p>';
+
+            container.innerHTML = `
+                <p>${escHtmlProf(analise.resumo || '')}</p>
+                ${analise.recomendacao_professor
+                    ? `<p style="margin-top:.8rem"><strong>Recomendação:</strong> ${escHtmlProf(analise.recomendacao_professor)}</p>`
+                    : ''}
+                <div class="linha-titulo" style="margin-top:1rem"><h4>Alunos que precisam de atenção</h4></div>
+                ${atencaoHTML}
+            `;
+        } catch {
+            container.innerHTML = '<p><em>Não foi possível carregar a análise de IA.</em></p>';
+        }
+    }
+
+    // ── Progresso individual nas trilhas (PROF-02) ────────────────────────────
+    async function carregarProgressoTrilhas(turmaId) {
+        const container = document.getElementById('progresso-trilhas-container');
+        if (!container) return;
+
+        container.innerHTML = '<p><em>Carregando progresso nas trilhas…</em></p>';
+
+        try {
+            const resp  = await api('/api/ia/progresso-trilhas/' + turmaId);
+            const dados = await resp.json();
+
+            if (dados.status !== 'ok') throw new Error(dados.message);
+
+            if (!dados.progresso.length) {
+                container.innerHTML = '<p><em>Nenhum aluno com progresso em trilhas nesta turma.</em></p>';
+                return;
+            }
+
+            // Agrupar por aluno
+            const porAluno = {};
+            dados.progresso.forEach(linha => {
+                if (!porAluno[linha.aluno_id]) {
+                    porAluno[linha.aluno_id] = { nome: linha.aluno_nome, trilhas: [] };
+                }
+                porAluno[linha.aluno_id].trilhas.push({
+                    trilha:     linha.trilha_titulo,
+                    disciplina: linha.disciplina,
+                    pct:        linha.progresso_pct || 0,
+                    concluidas: linha.etapas_concluidas,
+                    total:      linha.total_etapas
+                });
+            });
+
+            container.innerHTML = Object.values(porAluno).map(aluno => `
+                <div style="margin-bottom:1rem">
+                    <strong>${escHtmlProf(aluno.nome)}</strong>
+                    ${aluno.trilhas.map(t => `
+                        <div style="margin-left:1rem;margin-top:.3rem">
+                            <span>${escHtmlProf(t.trilha)}</span>
+                            <span style="margin-left:.5rem;opacity:.7">${t.concluidas}/${t.total} etapas</span>
+                            <div class="barra" style="margin-top:.2rem">
+                                <span style="width:${t.pct}%"></span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        } catch (erro) {
+            container.innerHTML = '<p class="erro-inline">Erro ao carregar progresso nas trilhas.</p>';
+            mostrarAviso('Erro ao carregar progresso: ' + erro.message);
+        }
+    }
+
+    function escHtmlProf(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     iniciar();
