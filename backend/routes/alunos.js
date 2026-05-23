@@ -12,6 +12,16 @@ function verificarProprioAluno(req, res, next) {
     next();
 }
 
+function verificarAluno(req, res, next) {
+    if (req.usuario.perfil !== "aluno") {
+        return res.status(403).json({ status: "erro", message: "Apenas alunos podem executar esta ação." });
+    }
+    next();
+}
+
+// /turma antes das rotas com :id para evitar conflito de parâmetro
+roteador.get("/turma", autenticar, verificarAluno, alunosController.getTurmaDoAluno);
+
 roteador.get("/:id/progresso/funcoes", autenticar, verificarProprioAluno, alunosController.getProgressoFuncoes);
 roteador.post("/:id/progresso/funcoes", autenticar, verificarProprioAluno, alunosController.salvarProgressoFuncoes);
 

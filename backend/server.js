@@ -9,6 +9,7 @@ const helmet = require("helmet");
 const rotasAuth = require("./routes/auth");
 const rotasUsuarios = require("./routes/usuarios");
 const rotasAlunos = require("./routes/alunos");
+const rotasTurmas = require("./routes/turmas");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -45,6 +46,8 @@ app.get("/api/db/status", async (_req, res) => {
 app.use("/api", rotasAuth);
 app.use("/api/usuarios", rotasUsuarios);
 app.use("/api/alunos", rotasAlunos);
+app.use("/api/aluno", rotasAlunos);
+app.use("/api/turmas", rotasTurmas);
 
 app.get("/", (_req, res) => {
     res.sendFile(path.join(pastaPublica, "index.html"));

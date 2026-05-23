@@ -64,4 +64,26 @@ async function salvarProgressoFuncoes(req, res) {
     }
 }
 
-module.exports = { getProgressoFuncoes, salvarProgressoFuncoes };
+async function getTurmaDoAluno(req, res) {
+    try {
+        const [turmas] = await banco.query(
+            `SELECT t.id, t.nome, t.disciplina, t.codigo,
+                    COUNT(ta2.id) AS total_alunos
+             FROM turma_alunos ta
+             JOIN turmas t ON t.id = ta.turma_id
+             LEFT JOIN turma_alunos ta2 ON ta2.turma_id = t.id
+             WHERE ta.aluno_id = ?
+             GROUP BY t.id
+             LIMIT 1`,
+            [req.usuario.id]
+        );
+        if (!turmas.length) {
+            return res.json({ status: "ok", turma: null });
+        }
+        res.json({ status: "ok", turma: turmas[0] });
+    } catch (erro) {
+        res.status(500).json({ status: "erro", message: "Erro ao buscar turma.", detalhe: erro.message });
+    }
+}
+
+module.exports = { getProgressoFuncoes, salvarProgressoFuncoes, getTurmaDoAluno };
