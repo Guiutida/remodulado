@@ -135,4 +135,53 @@
     }
 
     carregarHistorico();
+
+    // ── Resumo de desempenho por IA ───────────────────────────────────────────
+    async function carregarResumoIA() {
+        const container = document.getElementById('resumo-ia-aluno');
+        if (!container) return; // elemento ausente na página — encerrar silenciosamente
+
+        container.innerHTML = '<p><em>Gerando análise de desempenho…</em></p>';
+
+        try {
+            const resp  = await api('/api/ia/resumo-aluno');
+            const dados = await resp.json();
+
+            if (dados.status !== 'ok') {
+                container.innerHTML = '<p><em>Não foi possível gerar a análise agora.</em></p>';
+                return;
+            }
+
+            const { analise } = dados;
+
+            const fortesHTML = Array.isArray(analise.pontos_fortes) && analise.pontos_fortes.length
+                ? '<ul>' + analise.pontos_fortes.map(p => `<li>${escHtmlPainel(p)}</li>`).join('') + '</ul>'
+                : '<p><em>Continue entregando atividades para identificar seus pontos fortes.</em></p>';
+
+            const fracosHTML = Array.isArray(analise.pontos_fracos) && analise.pontos_fracos.length
+                ? '<ul>' + analise.pontos_fracos.map(p => `<li>${escHtmlPainel(p)}</li>`).join('') + '</ul>'
+                : '<p><em>Sem áreas de melhoria identificadas ainda.</em></p>';
+
+            container.innerHTML = `
+                <p>${escHtmlPainel(analise.resumo || '')}</p>
+                <div class="linha-titulo" style="margin-top:1rem"><h4>Pontos fortes</h4></div>
+                ${fortesHTML}
+                <div class="linha-titulo" style="margin-top:1rem"><h4>Pontos de melhoria</h4></div>
+                ${fracosHTML}
+                ${analise.recomendacao
+                    ? `<p style="margin-top:1rem"><strong>Próximo passo:</strong> ${escHtmlPainel(analise.recomendacao)}</p>`
+                    : ''}
+            `;
+        } catch {
+            container.innerHTML = '<p><em>Não foi possível carregar a análise de IA.</em></p>';
+        }
+    }
+
+    function escHtmlPainel(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    carregarResumoIA();
 })();
