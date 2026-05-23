@@ -1,16 +1,9 @@
+// backend/routes/alunos.js
 const { Router } = require("express");
 const { autenticar } = require("../middleware/auth");
 const alunosController = require("../controllers/alunosController");
 
 const roteador = Router();
-
-function verificarProprioAluno(req, res, next) {
-    const idRequisitado = parseInt(req.params.id, 10);
-    if (req.usuario.id !== idRequisitado) {
-        return res.status(403).json({ status: "erro", message: "Acesso negado." });
-    }
-    next();
-}
 
 function verificarAluno(req, res, next) {
     if (req.usuario.perfil !== "aluno") {
@@ -19,10 +12,13 @@ function verificarAluno(req, res, next) {
     next();
 }
 
-// /turma antes das rotas com :id para evitar conflito de parâmetro
-roteador.get("/turma", autenticar, verificarAluno, alunosController.getTurmaDoAluno);
+// ── Rotas literais (antes de /:id) ───────────────────────────────────────────
+roteador.get("/turma",      autenticar, verificarAluno, alunosController.getTurmaDoAluno);
+roteador.get("/painel",     autenticar, verificarAluno, alunosController.getPainel);
+roteador.get("/historico",  autenticar, verificarAluno, alunosController.getHistorico);
+roteador.get("/atividades", autenticar, verificarAluno, alunosController.getAtividades);
 
-roteador.get("/:id/progresso/funcoes", autenticar, verificarProprioAluno, alunosController.getProgressoFuncoes);
-roteador.post("/:id/progresso/funcoes", autenticar, verificarProprioAluno, alunosController.salvarProgressoFuncoes);
+// Nota: as rotas "/:id/progresso/funcoes" foram removidas — hardcoded, substituídas
+//       pelos endpoints reais acima.
 
 module.exports = roteador;
