@@ -1,5 +1,17 @@
 // backend/server.js — Entry point
 require("dotenv").config({ path: require("path").join(__dirname, ".env") });
+const { validarEnv } = require('./config/env');
+validarEnv(); // processo encerra aqui se vars ausentes
+
+process.on('unhandledRejection', (razao) => {
+    console.error('[UnhandledRejection]', razao);
+    process.exit(1);
+});
+
+process.on('uncaughtException', (erro) => {
+    console.error('[UncaughtException]', erro);
+    process.exit(1);
+});
 
 const express = require("express");
 const path = require("path");
@@ -19,7 +31,14 @@ const app = express();
 const porta = process.env.PORT || 3000;
 const pastaPublica = path.resolve(__dirname, "..");
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            'img-src': ["'self'", 'data:']
+        }
+    }
+}));
 app.use(cors({
     origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -27,6 +46,10 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.static(pastaPublica));
+
+const pastaUploads = require('path').join(__dirname, '..', 'uploads');
+require('fs').mkdirSync(pastaUploads, { recursive: true });
+app.use('/uploads', express.static(pastaUploads));
 
 app.get("/api/health", (_req, res) => {
     res.json({ status: "ok", message: "Servidor DuoPratic online." });
@@ -57,6 +80,13 @@ app.use("/api/ia", rotasIa);
 
 app.get("/", (_req, res) => {
     res.sendFile(path.join(pastaPublica, "index.html"));
+});
+
+app.use(function handler404(req, res) {
+    if (req.accepts('json')) {
+        return res.status(404).json({ status: 'erro', message: 'Rota não encontrada.' });
+    }
+    res.status(404).send('Não encontrado');
 });
 
 app.use(errorHandler);
