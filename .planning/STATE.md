@@ -5,7 +5,7 @@
 See: `.planning/PROJECT.md` (updated 2026-05-22)
 
 **Core value:** Alunos aprendem mais, com ritmo próprio e apoio de IA — professores acompanham o progresso sem esforço extra.
-**Current focus:** Phase 2 — Turmas e Trilhas
+**Current focus:** Phase 4 — Integração com IA
 
 ## Current Milestone
 
@@ -18,7 +18,7 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 |-------|--------|
 | Phase 1: Segurança e Fundação | ✅ Complete |
 | Phase 2: Turmas e Trilhas | ✅ Complete |
-| Phase 3: Atividades e Painel do Aluno | 🔲 Not Started |
+| Phase 3: Atividades e Painel do Aluno | ✅ Complete |
 | Phase 4: Integração com IA | 🔲 Not Started |
 | Phase 5: Polimento e Deploy | 🔲 Not Started |
 
@@ -30,9 +30,9 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 
 ## Next Step
 
-Run `/gsd-plan-phase 3` to plan Phase 3: Atividades e Painel do Aluno.
+Run `/gsd-plan-phase 4` to plan Phase 4: Integração com IA.
 
 ---
-*Last updated: 2026-05-22 after Phase 2 completion*
+*Last updated: 2026-05-22 after Phase 3 completion*
 
 
