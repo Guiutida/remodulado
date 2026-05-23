@@ -6,7 +6,7 @@
     <title>Minhas trilhas | DuoPratic</title>
     <link rel="stylesheet" href="../assets/css/base.css">
 </head>
-<body class="area-aluno" data-perfil-guard="aluno">
+<body class="area-aluno" data-perfil-guard="">
     <aside class="barra-aluno">
         <a class="marca" href="../index.html"><img class="logo" src="../assets/img/logo-duoPratic-icone.png" alt="Logo DuoPratic"><strong>Duo<span>Pratic</span></strong></a>
         <nav>
@@ -20,63 +20,133 @@
 
     <main class="painel-aluno">
         <header class="cabecalho-aluno">
-            <div><span>Trilhas do aluno</span><h1>Minhas trilhas.</h1></div>
+        <div><span>Trilhas</span><h1>Trilhas de Estudo.</h1></div>
             <div class="acoes-aluno">
                 <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
                 <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
                 <div class="perfil-menu">
-                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
+                <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil"><span data-avatar-inicial></span><span></span></button>
                     <div class="menu-perfil" data-painel="perfil">
-                        <div class="perfil-resumo"><span class="avatar-mini">G</span><div><strong data-nome-usuario>Guilherme</strong><small>Versão gratuita</small><button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button></div></div>
-                        <div class="status-menu" data-status-menu>
-                            <button type="button" data-status="Online"><span class="online"></span>Online</button>
-                            <button type="button" data-status="Ausente"><span class="ausente"></span>Ausente</button>
-                            <button type="button" data-status="Ocupado"><span class="ocupado"></span>Ocupado</button>
-                            <button type="button" data-status="Offline"><span class="offline"></span>Mostrar como offline</button>
-                        </div>
-                        <a href="configuracoes.html">Meu perfil</a><a href="turma.html">Minha turma</a><a href="configuracoes.html">Configurações</a><a href="#">Ajuda</a><a href="../index.html">Sair</a>
-                    </div>
+                    <div class="perfil-resumo"><span class="avatar-mini" data-avatar-mini></span><div><strong data-nome-usuario>Usuário</strong><small>DuoPratic</small></div></div>
+                    <a href="configuracoes.html">Meu perfil</a><a href="turma.html">Minha turma</a><a href="configuracoes.html">Configurações</a><a href="#">Ajuda</a><a href="../index.html">Sair</a>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <section class="cartao-destaque-pequeno">
-            <span>Trilha principal</span>
-            <h2>Funções do 1º grau</h2>
-            <p>Você está na etapa de prática. Continue com exercícios curtos e revisão guiada.</p>
-            <div class="barra"><span style="width: 72%"></span></div>
-            <a class="botao" href="estudo.html">Continuar</a>
+    <!-- ── VIEW PROFESSOR ── -->
+    <div id="view-professor" style="display:none">
+        <section class="continuidade">
+            <article class="cartao-painel destaque-aluno">
+                <span>Gerenciar</span>
+                <h2>Minhas Trilhas</h2>
+                <p>Crie trilhas com etapas e atribua a suas turmas.</p>
+            </article>
+        </section>
+        <section class="grade-pagina">
+            <article class="cartao-painel">
+                <h2>Criar nova trilha</h2>
+                <form id="form-criar-trilha">
+                    <div class="campo-form">
+                        <label for="trilha-turma-select">Turma</label>
+                        <select id="trilha-turma-select" name="turma_id" required>
+                            <option value="">Carregando...</option>
+                        </select>
+                    </div>
+                    <div class="campo-form">
+                        <label for="trilha-titulo">Título</label>
+                        <input id="trilha-titulo" name="titulo" type="text" placeholder="Ex: Funções do 1º grau" required>
+                    </div>
+                    <div class="campo-form">
+                        <label for="trilha-disciplina">Disciplina</label>
+                        <input id="trilha-disciplina" name="disciplina" type="text" placeholder="Ex: Matemática" required>
+                    </div>
+                    <div class="campo-form">
+                        <label for="trilha-descricao">Descrição (opcional)</label>
+                        <textarea id="trilha-descricao" name="descricao" rows="2" placeholder="Breve resumo da trilha"></textarea>
+                    </div>
+                    <button class="botao" type="submit">Criar trilha</button>
+                </form>
+            </article>
+            <article class="cartao-painel">
+                <h2>Minhas trilhas</h2>
+                <div id="lista-trilhas-professor"></div>
+                <p id="sem-trilhas-professor" style="display:none">Nenhuma trilha criada ainda.</p>
+            </article>
+        </section>
+    </div>
+
+    <!-- ── VIEW ALUNO ── -->
+    <div id="view-aluno" style="display:none">
+        <!-- Destaque da trilha em andamento -->
+        <section id="destaque-trilha" style="display:none" class="cartao-destaque-pequeno">
+            <span>Continue de onde parou</span>
+            <h2 data-destaque-titulo></h2>
+            <p data-destaque-desc></p>
+            <div data-destaque-barra></div>
+            <a class="botao" href="#" data-destaque-btn data-acao="abrir-trilha">Continuar</a>
         </section>
 
         <section class="grade-pagina">
             <article class="cartao-painel">
-                <h2>Em andamento</h2>
-                <div class="lista-pagina">
-                    <div class="cartao-linha"><div class="linha-meta"><strong>Matemática</strong><span class="etiqueta">72%</span></div><p>Funções, equações e raciocínio lógico.</p></div>
-                    <div class="cartao-linha"><div class="linha-meta"><strong>Português</strong><span class="etiqueta">38%</span></div><p>Interpretação de texto e leitura guiada.</p></div>
-                </div>
-            </article>
-
-            <article class="cartao-painel">
-                <h2>Próximas trilhas</h2>
-                <div class="lista-pagina">
-                    <div class="cartao-linha"><strong>Ciências</strong><p>Biologia celular e energia.</p></div>
-                    <div class="cartao-linha"><strong>História</strong><p>Linha do tempo e análise de fontes.</p></div>
-                </div>
+                <h2>Minhas trilhas</h2>
+                <div id="lista-trilhas-aluno"></div>
+                <p id="sem-trilhas-aluno" style="display:none">Seu professor ainda não criou trilhas para sua turma.</p>
             </article>
         </section>
+    </div>
     </main>
 
     <div class="fundo-painel" data-fechar></div>
     <aside class="painel-lateral" data-painel="notificacoes" aria-label="Notificações">
         <header><div><h2>Notificações</h2><span>Não lidas</span></div><button type="button" data-fechar aria-label="Fechar">&times;</button></header>
-        <section class="lista-notificacoes">
-            <article><strong>Nova atividade adicionada</strong><p>Prof. Ana enviou uma atividade de funções do 1º grau.</p><span>Agora</span></article>
-            <article><strong>Aviso da turma</strong><p>A revisão de Matemática foi marcada para sexta-feira.</p><span>Hoje</span></article>
-            <article><strong>Mensagem do professor</strong><p>Confira o comentário na sua última resposta.</p><span>Ontem</span></article>
-        </section>
+        <section class="lista-notificacoes"></section>
     </aside>
+
+    <!-- Modal gerenciar etapas (professor) -->
+    <div id="modal-etapas" class="modal-overlay" style="display:none">
+        <div class="modal-conteudo">
+            <div class="modal-header">
+                <h2 id="modal-etapas-titulo">Etapas da trilha</h2>
+                <button type="button" data-fechar-modal="etapas" aria-label="Fechar">&times;</button>
+            </div>
+            <div id="modal-etapas-lista"></div>
+            <form id="form-adicionar-etapa" class="form-modal">
+                <h3>Adicionar etapa</h3>
+                <div class="campo-form">
+                    <label for="etapa-titulo-input">Título</label>
+                    <input id="etapa-titulo-input" name="etapa-titulo" type="text" placeholder="Ex: Introdução ao conteúdo" required>
+                </div>
+                <div class="campo-form">
+                    <label for="etapa-tipo-select">Tipo</label>
+                    <select id="etapa-tipo-select" name="etapa-tipo" required>
+                        <option value="texto">Texto</option>
+                        <option value="video">Vídeo</option>
+                        <option value="link">Link</option>
+                    </select>
+                </div>
+                <div class="campo-form">
+                    <label for="etapa-conteudo-input">Conteúdo</label>
+                    <textarea id="etapa-conteudo-input" name="etapa-conteudo" rows="3" placeholder="Cole o texto, URL do vídeo ou link externo" required></textarea>
+                </div>
+                <button class="botao" type="submit">Adicionar etapa</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal trilha do aluno -->
+    <div id="modal-trilha-aluno" class="modal-overlay" style="display:none">
+        <div class="modal-conteudo">
+            <div class="modal-header">
+                <h2 id="modal-trilha-titulo">Trilha</h2>
+                <button type="button" data-fechar-modal="trilha-aluno" aria-label="Fechar">&times;</button>
+            </div>
+            <div id="modal-trilha-conteudo"></div>
+        </div>
+    </div>
+
     <script src="../assets/js/auth-guard.js"></script>
     <script src="../assets/js/aluno.js"></script>
+    <script src="../assets/js/trilhas.js"></script>
 </body>
 </html>
