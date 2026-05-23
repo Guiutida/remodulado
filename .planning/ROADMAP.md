@@ -8,8 +8,8 @@
 
 ## Phases
 
-- [ ] **Phase 1: Segurança e Fundação** — Corrigir as 5 vulnerabilidades de segurança confirmadas e refatorar a estrutura do servidor
-- [ ] **Phase 2: Turmas e Trilhas** — Ligar os shells HTML existentes a dados reais; CRUD completo de turmas e trilhas
+- [x] **Phase 1: Segurança e Fundação** — Corrigir as 5 vulnerabilidades de segurança confirmadas e refatorar a estrutura do servidor
+- [x] **Phase 2: Turmas e Trilhas** — Ligar os shells HTML existentes a dados reais; CRUD completo de turmas e trilhas
 - [ ] **Phase 3: Atividades e Painel do Aluno** — Loop de criação/submissão de atividades e painel do aluno com dados reais
 - [ ] **Phase 4: Integração com IA** — Tutor Socrático, geração de trilhas e análise de desempenho com Gemini
 - [ ] **Phase 5: Polimento e Deploy** — Sistema pronto para produção, implantado e validado para apresentação do TCC
@@ -49,10 +49,7 @@
 **Goal:** Professor cria turmas e trilhas; aluno entra na turma e navega pelas trilhas — tudo persistido no banco, zero dados hardcoded visíveis.
 **Depends on:** Phase 1
 **Requirements:** TURM-01, TURM-02, TURM-03, TURM-04, TURM-05, TRIL-01, TRIL-02, TRIL-03, TRIL-04, TRIL-05, TRIL-06, TRIL-07
-**Status:** Not Started
-
-**Success Criteria** (what must be TRUE):
-1. Professor preenche formulário em `turma.html`, cria turma e vê a turma listada com código de acesso gerado
+**Status:** ✅ Complete (2026-05-22) cria turma e vê a turma listada com código de acesso gerado
 2. Aluno digita o código de acesso e aparece na lista de membros da turma do professor
 3. Professor acessa `trilhas.html`, cria trilha com etapas (texto/vídeo/link) e a atribui à turma
 4. Aluno vê as trilhas disponíveis na sua turma e navega pelas etapas em sequência
@@ -152,8 +149,8 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Segurança e Fundação | 0/5 | Not started | - |
-| 2. Turmas e Trilhas | 0/5 | Not started | - |
+| 1. Segurança e Fundação | 5/5 | ✅ Complete | 2026-05-22 |
+| 2. Turmas e Trilhas | 5/5 | ✅ Complete | 2026-05-22 |
 | 3. Atividades e Painel do Aluno | 0/5 | Not started | - |
 | 4. Integração com IA | 0/5 | Not started | - |
 | 5. Polimento e Deploy | 0/5 | Not started | - |
