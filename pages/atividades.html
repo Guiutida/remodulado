@@ -6,7 +6,7 @@
     <title>Atividades | DuoPratic</title>
     <link rel="stylesheet" href="../assets/css/base.css">
 </head>
-<body class="area-aluno" data-perfil-guard="aluno">
+<body class="area-aluno" data-perfil-guard="">
     <aside class="barra-aluno">
         <a class="marca" href="../index.html"><img class="logo" src="../assets/img/logo-duoPratic-icone.png" alt="Logo DuoPratic"><strong>Duo<span>Pratic</span></strong></a>
         <nav>
@@ -25,9 +25,9 @@
                 <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
                 <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
                 <div class="perfil-menu">
-                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
+                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil"><span data-inicial-usuario>?</span><span></span></button>
                     <div class="menu-perfil" data-painel="perfil">
-                        <div class="perfil-resumo"><span class="avatar-mini">G</span><div><strong data-nome-usuario>Guilherme</strong><button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button></div></div>
+                        <div class="perfil-resumo"><span class="avatar-mini" data-inicial-usuario-mini>?</span><div><strong data-nome-usuario>Carregando...</strong><button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button></div></div>
                         <div class="status-menu" data-status-menu>
                             <button type="button" data-status="Online"><span class="online"></span>Online</button>
                             <button type="button" data-status="Ausente"><span class="ausente"></span>Ausente</button>
@@ -40,92 +40,148 @@
             </div>
         </header>
 
-        <section class="continuidade">
-            <article class="cartao-painel destaque-aluno">
-                <span>Próxima entrega</span>
-                <h2>Funções do 1º grau</h2>
-                <p data-atividade-principal>Resolva uma questão curta e explique seu raciocínio antes da orientação da IA.</p>
-                <a class="botao" data-botao-atividade-principal href="estudo.html">Abrir atividade</a>
-            </article>
-            <div class="indicadores-aluno">
-                <article class="cartao-painel"><span>Pendentes</span><strong data-total-pendentes>3</strong></article>
-                <article class="cartao-painel"><span>Entregues</span><strong data-total-entregues>8</strong></article>
-                <article class="cartao-painel"><span>Próximo prazo</span><strong>sexta</strong></article>
-            </div>
-        </section>
+        <!-- ═══ VIEW PROFESSOR ═══════════════════════════════════════════ -->
+        <div id="view-professor" style="display:none">
+            <!-- Formulário: criar atividade -->
+            <section class="cartao-painel">
+                <h2>Criar atividade</h2>
+                <form id="form-criar-atividade">
+                    <div>
+                        <label for="atv-titulo">Título</label>
+                        <input id="atv-titulo" name="titulo" type="text" required maxlength="140" placeholder="Ex: Funções do 2º grau">
+                    </div>
+                    <div>
+                        <label for="atv-turma">Turma</label>
+                        <select id="atv-turma" name="turma_id" required>
+                            <option value="">Selecione a turma...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="atv-descricao">Descrição (opcional)</label>
+                        <textarea id="atv-descricao" name="descricao" rows="2" maxlength="500" placeholder="Instruções para o aluno"></textarea>
+                    </div>
+                    <div>
+                        <label for="atv-prazo">Prazo</label>
+                        <input id="atv-prazo" name="prazo" type="date">
+                    </div>
+                    <button type="submit" class="botao">Criar atividade</button>
+                </form>
+            </section>
 
-        <section class="cartao-painel">
-            <div class="linha-titulo">
-                <h2>Lista de atividades</h2>
-                <div class="filtros-atividades">
-                    <button class="ativo" type="button" data-filtro-atividade="todas">Todas</button>
-                    <button type="button" data-filtro-atividade="pendente">Pendentes</button>
-                    <button type="button" data-filtro-atividade="entregue">Entregues</button>
+            <!-- Área: adicionar questões à atividade recém-criada -->
+            <section class="cartao-painel" id="secao-adicionar-questoes" style="display:none">
+                <div class="linha-titulo">
+                    <h2>Adicionar questões — <em id="atividade-criada-titulo"></em></h2>
+                    <button type="button" class="botao botao-claro" id="btn-finalizar-questoes">Finalizar</button>
                 </div>
-            </div>
-
-            <div class="lista-atividades">
-                <article class="item-atividade" data-grupo-atividade="pendente" data-atividade-funcoes>
+                <form id="form-adicionar-questao">
                     <div>
-                        <div class="linha-meta">
-                            <strong>Funções do 1º grau</strong>
-                            <span class="etiqueta" data-status-funcoes>Pendente</span>
-                        </div>
-                        <p>Matemática com Prof. Ana. Responda 5 questões e explique uma delas.</p>
-                        <div class="meta-atividade"><span>Prazo: sexta-feira</span><span>Trilha: Prática</span></div>
+                        <label for="q-tipo">Tipo</label>
+                        <select id="q-tipo" name="tipo" required>
+                            <option value="multipla_escolha">Múltipla escolha</option>
+                            <option value="dissertativa">Dissertativa</option>
+                        </select>
                     </div>
-                    <a class="botao botao-pequeno" data-link-funcoes href="estudo.html">Resolver</a>
-                </article>
-
-                <article class="item-atividade" data-grupo-atividade="pendente">
                     <div>
-                        <div class="linha-meta">
-                            <strong>Interpretação de texto</strong>
-                            <span class="etiqueta">Amanhã</span>
-                        </div>
-                        <p>Português. Leia um texto curto e marque a ideia central.</p>
-                        <div class="meta-atividade"><span>Prazo: amanhã</span><span>Trilha: Leitura</span></div>
+                        <label for="q-enunciado">Enunciado</label>
+                        <textarea id="q-enunciado" name="enunciado" rows="3" required placeholder="Digite a pergunta"></textarea>
                     </div>
-                    <a class="botao botao-pequeno botao-claro" href="ia-estudo.html">Preparar</a>
-                </article>
+                    <!-- Opções MC — visível apenas quando tipo = multipla_escolha -->
+                    <div id="area-opcoes-mc">
+                        <label>Alternativas</label>
+                        <input name="opcao_a" type="text" placeholder="a) " maxlength="200">
+                        <input name="opcao_b" type="text" placeholder="b) " maxlength="200">
+                        <input name="opcao_c" type="text" placeholder="c) " maxlength="200">
+                        <input name="opcao_d" type="text" placeholder="d) " maxlength="200">
+                        <label for="q-gabarito">Gabarito (letra correta)</label>
+                        <select id="q-gabarito" name="gabarito">
+                            <option value="a">a</option>
+                            <option value="b">b</option>
+                            <option value="c">c</option>
+                            <option value="d">d</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="botao">Adicionar questão</button>
+                </form>
+                <div id="lista-questoes-adicionadas"></div>
+            </section>
 
-                <article class="item-atividade" data-grupo-atividade="pendente">
-                    <div>
-                        <div class="linha-meta">
-                            <strong>Biologia celular</strong>
-                            <span class="etiqueta">Semana</span>
-                        </div>
-                        <p>Ciências. Revise os conceitos de membrana e organelas.</p>
-                        <div class="meta-atividade"><span>Prazo: segunda-feira</span><span>Trilha: Base</span></div>
-                    </div>
-                    <a class="botao botao-pequeno botao-claro" href="trilhas.html">Ver trilha</a>
-                </article>
+            <!-- Lista de atividades criadas com botão "ver entregas" -->
+            <section class="cartao-painel" id="secao-lista-atividades-prof">
+                <div class="linha-titulo">
+                    <h2>Minhas atividades</h2>
+                </div>
+                <div id="lista-atividades-professor"><p><em>Carregando...</em></p></div>
+            </section>
 
-                <article class="item-atividade" data-grupo-atividade="entregue">
-                    <div>
-                        <div class="linha-meta">
-                            <strong>Equações simples</strong>
-                            <span class="etiqueta status-entregue">Entregue</span>
-                        </div>
-                        <p>Atividade corrigida com 80% de acerto.</p>
-                        <div class="meta-atividade"><span>Entregue ontem</span><span>Comentário disponível</span></div>
-                    </div>
-                    <a class="botao botao-pequeno botao-claro" href="ia-estudo.html">Revisar</a>
+            <!-- Painel de entregas de uma atividade (expandível) -->
+            <section class="cartao-painel" id="secao-entregas" style="display:none">
+                <div class="linha-titulo">
+                    <h2>Entregas — <em id="entregas-atividade-titulo"></em></h2>
+                    <button type="button" class="botao botao-claro" id="btn-fechar-entregas">Fechar</button>
+                </div>
+                <div id="lista-entregas-alunos"><p><em>Carregando...</em></p></div>
+            </section>
+        </div>
+
+        <!-- ═══ VIEW ALUNO ════════════════════════════════════════════════ -->
+        <div id="view-aluno" style="display:none">
+            <!-- Resumo rápido -->
+            <section class="continuidade">
+                <article class="cartao-painel destaque-aluno">
+                    <span>Próxima entrega</span>
+                    <h2 data-proxima-atividade-titulo>Carregando...</h2>
+                    <p data-proxima-atividade-desc></p>
+                    <a class="botao" data-link-responder href="#">Abrir atividade</a>
                 </article>
-            </div>
-        </section>
+                <div class="indicadores-aluno">
+                    <article class="cartao-painel"><span>Pendentes</span><strong data-total-pendentes>--</strong></article>
+                    <article class="cartao-painel"><span>Entregues</span><strong data-total-entregues>--</strong></article>
+                    <article class="cartao-painel"><span>Próximo prazo</span><strong data-proximo-prazo>--</strong></article>
+                </div>
+            </section>
+
+            <!-- Lista de atividades com filtro -->
+            <section class="cartao-painel">
+                <div class="linha-titulo">
+                    <h2>Lista de atividades</h2>
+                    <div class="filtros-atividades">
+                        <button class="ativo" type="button" data-filtro-atividade="todas">Todas</button>
+                        <button type="button" data-filtro-atividade="pendente">Pendentes</button>
+                        <button type="button" data-filtro-atividade="entregue">Entregues</button>
+                    </div>
+                </div>
+                <div class="lista-atividades" id="lista-atividades-aluno">
+                    <p><em>Carregando atividades...</em></p>
+                </div>
+            </section>
+
+            <!-- Seção de resposta a uma atividade (inline, aparece ao clicar em "Resolver") -->
+            <section class="cartao-painel" id="secao-responder" style="display:none">
+                <div class="linha-titulo">
+                    <h2 id="responder-titulo"></h2>
+                    <button type="button" class="botao botao-claro" id="btn-cancelar-resposta">Cancelar</button>
+                </div>
+                <form id="form-responder-atividade">
+                    <div id="area-questoes-resposta"></div>
+                    <button type="submit" class="botao">Enviar respostas</button>
+                </form>
+                <!-- Resultado exibido após submissão -->
+                <div id="area-feedback-resposta" style="display:none"></div>
+            </section>
+        </div>
     </main>
 
     <div class="fundo-painel" data-fechar></div>
     <aside class="painel-lateral" data-painel="notificacoes" aria-label="Notificações">
         <header><div><h2>Notificações</h2><span>Não lidas</span></div><button type="button" data-fechar aria-label="Fechar">&times;</button></header>
-        <section class="lista-notificacoes">
-            <article><strong>Nova atividade adicionada</strong><p>Prof. Ana enviou uma atividade de funções do 1º grau.</p><span>Agora</span></article>
-            <article><strong>Aviso da turma</strong><p>A revisão de Matemática foi marcada para sexta-feira.</p><span>Hoje</span></article>
-            <article><strong>Mensagem do professor</strong><p>Confira o comentário na sua última resposta.</p><span>Ontem</span></article>
+        <section class="lista-notificacoes" id="lista-notificacoes-atv">
+            <article><strong>Atividades carregadas</strong><p>Verifique suas pendências acima.</p><span>Agora</span></article>
         </section>
     </aside>
+
     <script src="../assets/js/auth-guard.js"></script>
     <script src="../assets/js/aluno.js"></script>
+    <script src="../assets/js/atividades.js"></script>
 </body>
 </html>
