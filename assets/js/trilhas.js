@@ -17,7 +17,7 @@
     }
 
     function mostrarErro(msg) {
-        mostrarAviso(msg, "erro");
+        showError(msg);
     }
 
     function renderBarra(percentual) {
@@ -55,6 +55,7 @@
         const select = document.getElementById("trilha-turma-select");
         if (!select) return;
         try {
+            showLoading();
             const resposta = await api("/api/turmas");
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -66,8 +67,10 @@
                     dados.turmas.map(t => `<option value="${t.id}">${t.nome} — ${t.disciplina}</option>`).join("");
             }
             await carregarTrilhasProfessor();
-        } catch (erro) {
-            mostrarErro("Erro ao carregar turmas: " + erro.message);
+        } catch {
+            mostrarErro("Não foi possível carregar turmas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -76,6 +79,7 @@
         const vazio = document.getElementById("sem-trilhas-professor");
         if (!lista) return;
         try {
+            showLoading();
             const resposta = await api("/api/trilhas/minhas");
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -106,8 +110,10 @@
             lista.querySelectorAll("[data-acao='gerenciar-trilha']").forEach(btn => {
                 btn.addEventListener("click", () => abrirModalEtapas(btn.dataset.id, btn.dataset.titulo));
             });
-        } catch (erro) {
-            mostrarErro("Erro ao carregar trilhas: " + erro.message);
+        } catch {
+            mostrarErro("Não foi possível carregar trilhas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -127,6 +133,7 @@
             const btn = form.querySelector("button[type='submit']");
             if (btn) btn.disabled = true;
             try {
+                showLoading();
                 const resposta = await api("/api/trilhas", {
                     method: "POST",
                     body: JSON.stringify({ turma_id: parseInt(turma_id, 10), titulo, disciplina, descricao })
@@ -134,11 +141,12 @@
                 const dados = await resposta.json();
                 if (dados.status !== "ok") throw new Error(dados.message);
                 form.reset();
-                mostrarAviso(`Trilha "${dados.trilha.titulo}" criada!`, "sucesso");
+                showSuccess(`Trilha "${dados.trilha.titulo}" criada!`);
                 await carregarTrilhasProfessor();
-            } catch (erro) {
-                mostrarErro("Erro ao criar trilha: " + erro.message);
+            } catch {
+                mostrarErro("Não foi possível criar trilha. Tente novamente.");
             } finally {
+                hideLoading();
                 if (btn) btn.disabled = false;
             }
         });
@@ -152,7 +160,6 @@
 
         if (titulo) titulo.textContent = trilhaTitulo;
         modal.dataset.trilhaId = trilhaId;
-        lista.innerHTML = "<p>Carregando...</p>";
         modal.style.display = "";
 
         await recarregarEtapasModal(trilhaId);
@@ -163,6 +170,7 @@
         const lista = document.getElementById("modal-etapas-lista");
         if (!lista) return;
         try {
+            showLoading();
             const resposta = await api(`/api/trilhas/${trilhaId}`);
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -184,8 +192,10 @@
                     `).join("")}
                 </ol>
             `;
-        } catch (erro) {
-            lista.innerHTML = `<p class="erro-inline">${erro.message}</p>`;
+        } catch {
+            lista.innerHTML = "<p class='erro-inline'>Não foi possível carregar etapas.</p>";
+        } finally {
+            hideLoading();
         }
     }
 
@@ -205,6 +215,7 @@
             const btn = novoForm.querySelector("button[type='submit']");
             if (btn) btn.disabled = true;
             try {
+                showLoading();
                 const resposta = await api(`/api/trilhas/${trilhaId}/etapas`, {
                     method: "POST",
                     body: JSON.stringify({ titulo, tipo, conteudo })
@@ -212,11 +223,12 @@
                 const dados = await resposta.json();
                 if (dados.status !== "ok") throw new Error(dados.message);
                 novoForm.reset();
-                mostrarAviso(`Etapa "${dados.etapa.titulo}" adicionada.`, "sucesso");
+                showSuccess(`Etapa "${dados.etapa.titulo}" adicionada.`);
                 await recarregarEtapasModal(trilhaId);
-            } catch (erro) {
-                mostrarErro("Erro ao adicionar etapa: " + erro.message);
+            } catch {
+                mostrarErro("Não foi possível adicionar etapa. Tente novamente.");
             } finally {
+                hideLoading();
                 if (btn) btn.disabled = false;
             }
         });
@@ -244,6 +256,7 @@
         if (!lista) return;
 
         try {
+            showLoading();
             const resposta = await api("/api/trilhas/disponiveis");
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -301,8 +314,10 @@
                     abrirModalTrilhaAluno(btn.dataset.id, btn.dataset.titulo);
                 }
             });
-        } catch (erro) {
-            mostrarErro("Erro ao carregar trilhas: " + erro.message);
+        } catch {
+            mostrarErro("Não foi possível carregar trilhas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -313,11 +328,11 @@
         if (!modal || !conteudo) return;
 
         if (titulo) titulo.textContent = trilhaTitulo;
-        conteudo.innerHTML = "<p>Carregando...</p>";
         modal.dataset.trilhaId = trilhaId;
         modal.style.display = "";
 
         try {
+            showLoading();
             const resposta = await api(`/api/trilhas/${trilhaId}`);
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -349,13 +364,17 @@
             conteudo.querySelectorAll("input[type='checkbox']").forEach(cb => {
                 cb.addEventListener("change", () => marcarProgresso(cb.dataset.trilha, cb.dataset.etapa, cb.checked, trilhaId, trilhaTitulo));
             });
-        } catch (erro) {
-            conteudo.innerHTML = `<p class="erro-inline">${erro.message}</p>`;
+        } catch {
+            conteudo.innerHTML = "<p class='erro-inline'>Não foi possível carregar a trilha.</p>";
+            showError("Não foi possível carregar a trilha.");
+        } finally {
+            hideLoading();
         }
     }
 
     async function marcarProgresso(trilhaId, etapaId, concluido, trilhaIdModal, trilhaTituloModal) {
         try {
+            showLoading();
             const resposta = await api(`/api/trilhas/${trilhaId}/etapas/${etapaId}/progresso`, {
                 method: "PUT",
                 body: JSON.stringify({ concluido })
@@ -363,9 +382,11 @@
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
             await carregarTrilhasAluno();
-        } catch (erro) {
-            mostrarErro("Erro ao salvar progresso: " + erro.message);
+        } catch {
+            mostrarErro("Não foi possível salvar progresso. Tente novamente.");
             await abrirModalTrilhaAluno(trilhaIdModal, trilhaTituloModal);
+        } finally {
+            hideLoading();
         }
     }
 

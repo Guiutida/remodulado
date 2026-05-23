@@ -73,6 +73,7 @@
         if (botao) { botao.disabled = true; botao.textContent = 'Gerando com IA…'; }
 
         try {
+            showLoading();
             var resp  = await api('/api/ia/gerar-trilha', {
                 method: 'POST',
                 body: JSON.stringify({ tema: tema, nivel: nivel, qtdEtapas: qtdEtapas })
@@ -84,9 +85,10 @@
             trilhaGerada = dados.trilha;
             renderizarPreview(trilhaGerada, turmaId);
 
-        } catch (erro) {
-            mostrarAviso('Erro ao gerar trilha: ' + erro.message);
+        } catch {
+            showError('Não foi possível gerar a trilha. Tente novamente.');
         } finally {
+            hideLoading();
             if (botao) { botao.disabled = false; botao.textContent = 'Gerar com IA'; }
         }
     });
@@ -180,6 +182,7 @@
         if (botao) { botao.disabled = true; botao.textContent = 'Publicando…'; }
 
         try {
+            showLoading();
             var resp  = await api('/api/ia/salvar-trilha', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -194,7 +197,7 @@
 
             if (dados.status !== 'ok') throw new Error(dados.message);
 
-            mostrarAviso('Trilha publicada com sucesso!');
+            showSuccess('Trilha publicada com sucesso!');
             containerPreview.innerHTML = '';
             containerPreview.style.display = 'none';
             trilhaGerada = null;
@@ -206,9 +209,11 @@
                 window.location.reload();
             }
 
-        } catch (erro) {
-            mostrarAviso('Erro ao publicar trilha: ' + erro.message);
+        } catch {
+            showError('Não foi possível publicar a trilha. Tente novamente.');
             if (botao) { botao.disabled = false; botao.textContent = 'Publicar trilha'; }
+        } finally {
+            hideLoading();
         }
     }
 

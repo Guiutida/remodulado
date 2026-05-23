@@ -56,6 +56,7 @@
         const sel = document.getElementById("atv-turma");
         if (!sel) return;
         try {
+            showLoading();
             const resp  = await api("/api/turmas");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -65,8 +66,10 @@
                 opt.textContent = t.nome + " — " + t.disciplina;
                 sel.appendChild(opt);
             });
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar turmas: " + erro.message);
+        } catch {
+            showError("Não foi possível carregar turmas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -91,6 +94,7 @@
             }
 
             try {
+                showLoading();
                 const resp  = await api("/api/atividades", {
                     method: "POST",
                     body: JSON.stringify({ titulo, turma_id, descricao, prazo })
@@ -108,9 +112,10 @@
                 form.reset();
                 mostrarAviso("Atividade criada! Adicione as questões abaixo.");
                 await carregarAtividadesProfessor();
-            } catch (erro) {
-                mostrarAviso("Erro ao criar atividade: " + erro.message);
+            } catch {
+                showError("Não foi possível criar atividade. Tente novamente.");
             } finally {
+                hideLoading();
                 if (btn) btn.disabled = false;
             }
         });
@@ -160,6 +165,7 @@
             }
 
             try {
+                showLoading();
                 const resp  = await api("/api/atividades/" + atividadeAtualId + "/questoes", {
                     method: "POST",
                     body: JSON.stringify({ tipo, enunciado, opcoes, gabarito })
@@ -177,9 +183,10 @@
                 form.reset();
                 configurarTipoQuestao(); // re-aplica visibilidade após reset
                 mostrarAviso("Questão adicionada.");
-            } catch (erro) {
-                mostrarAviso("Erro ao adicionar questão: " + erro.message);
+            } catch {
+                showError("Não foi possível adicionar questão. Tente novamente.");
             } finally {
+                hideLoading();
                 if (btn) btn.disabled = false;
             }
         });
@@ -197,6 +204,7 @@
         const lista = document.getElementById("lista-atividades-professor");
         if (!lista) return;
         try {
+            showLoading();
             const resp  = await api("/api/atividades");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -226,8 +234,11 @@
                     abrirEntregas(btn.dataset.acaoEntregas, btn.dataset.tituloEntregas)
                 );
             });
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar atividades: " + erro.message);
+        } catch {
+            lista.innerHTML = "<p class='erro-inline'>Não foi possível carregar atividades.</p>";
+            showError("Não foi possível carregar atividades.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -239,10 +250,10 @@
 
         if (elTit) elTit.textContent = titulo;
         secao.style.display = "";
-        lista.innerHTML     = "<p><em>Carregando...</em></p>";
         secao.scrollIntoView({ behavior: "smooth" });
 
         try {
+            showLoading();
             const resp  = await api("/api/atividades/" + atividadeId + "/entregas");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -271,9 +282,11 @@
                     </tbody>
                 </table>
             `;
-        } catch (erro) {
-            lista.innerHTML = "<p class='erro-inline'>Erro ao carregar entregas.</p>";
-            mostrarAviso("Erro ao buscar entregas: " + erro.message);
+        } catch {
+            lista.innerHTML = "<p class='erro-inline'>Não foi possível carregar entregas.</p>";
+            showError("Não foi possível carregar entregas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -299,14 +312,17 @@
 
     async function carregarAtividadesAluno() {
         try {
+            showLoading();
             const resp  = await api("/api/alunos/atividades");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
 
             renderizarAtividades(dados.atividades);
             atualizarContadores(dados.atividades);
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar atividades: " + erro.message);
+        } catch {
+            showError("Não foi possível carregar atividades.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -412,7 +428,7 @@
                 api("/api/alunos/atividades")
                     .then(r => r.json())
                     .then(d => { if (d.status === "ok") renderizarAtividades(d.atividades); })
-                    .catch(err => mostrarAviso("Erro: " + err.message));
+                    .catch(() => showError("Não foi possível carregar. Tente novamente."));
             });
         });
     }
@@ -426,12 +442,12 @@
 
         if (elTitulo) elTitulo.textContent = titulo;
         feedback.style.display = "none";
-        areaQ.innerHTML = "<p><em>Carregando questões...</em></p>";
         secao.style.display = "";
         secao.scrollIntoView({ behavior: "smooth" });
         secao.dataset.atividadeId = atividadeId;
 
         try {
+            showLoading();
             const resp  = await api("/api/atividades/" + atividadeId);
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -461,8 +477,11 @@
                     `;
                 }
             }).join("");
-        } catch (erro) {
-            areaQ.innerHTML = "<p class='erro-inline'>Erro ao carregar questões: " + erro.message + "</p>";
+        } catch {
+            areaQ.innerHTML = "<p class='erro-inline'>Não foi possível carregar questões. Tente novamente.</p>";
+            showError("Não foi possível carregar questões.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -494,6 +513,7 @@
         }
 
         try {
+            showLoading();
             const resp  = await api("/api/atividades/" + atividadeId + "/respostas", {
                 method: "POST",
                 body: JSON.stringify({ respostas })
@@ -532,9 +552,11 @@
                 carregarAtividadesAluno();
             });
 
-        } catch (erro) {
-            mostrarAviso("Erro ao enviar respostas: " + erro.message);
+        } catch {
+            showError("Não foi possível enviar respostas. Tente novamente.");
             if (btn) btn.disabled = false;
+        } finally {
+            hideLoading();
         }
     }
 
@@ -555,9 +577,8 @@
         const submitBtn = form?.querySelector("button[type='submit']");
         if (submitBtn) submitBtn.style.display = "none";
 
-        feedback.innerHTML = "<p><em>Carregando respostas...</em></p>";
-
         try {
+            showLoading();
             const resp  = await api("/api/atividades/" + atividadeId + "/respostas");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -582,9 +603,11 @@
 
             document.getElementById("btn-voltar-lista-rev")?.addEventListener("click", fecharResponder);
 
-        } catch (erro) {
-            feedback.innerHTML = "<p class='erro-inline'>Erro ao carregar respostas.</p>";
-            mostrarAviso("Erro: " + erro.message);
+        } catch {
+            feedback.innerHTML = "<p class='erro-inline'>Não foi possível carregar respostas.</p>";
+            showError("Não foi possível carregar respostas.");
+        } finally {
+            hideLoading();
         }
     }
 

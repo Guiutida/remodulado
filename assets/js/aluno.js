@@ -38,6 +38,7 @@ async function buscarPreferenciasBanco() {
     if (!usuario?.id) return;
 
     try {
+        showLoading();
         const resposta = await fetch(`/api/usuarios/${usuario.id}/preferencias`, {
             headers: { "Authorization": `Bearer ${tokenAtual()}` }
         });
@@ -57,7 +58,9 @@ async function buscarPreferenciasBanco() {
             preencherCamposPreferencias();
         }
     } catch {
-        mostrarAviso("Nao foi possivel carregar preferencias");
+        showError("Não foi possível carregar preferências.");
+    } finally {
+        hideLoading();
     }
 }
 
@@ -87,6 +90,7 @@ async function buscarUsuarioBanco() {
     if (!usuario || !usuario.id) return;
 
     try {
+        showLoading();
         const resposta = await fetch(`/api/usuarios/${usuario.id}`, {
             headers: { "Authorization": `Bearer ${tokenAtual()}` }
         });
@@ -104,7 +108,9 @@ async function buscarUsuarioBanco() {
             preencherCamposConta();
         }
     } catch {
-        mostrarAviso("Não foi possível atualizar dados da conta");
+        showError("Não foi possível carregar dados da conta.");
+    } finally {
+        hideLoading();
     }
 }
 

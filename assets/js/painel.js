@@ -20,6 +20,7 @@
 
     async function carregarPainel() {
         try {
+            showLoading();
             const resp  = await api("/api/alunos/painel");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -103,8 +104,10 @@
                 }).join("");
             }
 
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar painel: " + erro.message);
+        } catch {
+            showError("Não foi possível carregar o painel.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -114,6 +117,7 @@
         const listaEl = document.getElementById("lista-historico");
         if (!listaEl) return;
         try {
+            showLoading();
             const resp  = await api("/api/alunos/historico");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -129,8 +133,10 @@
                     · ${new Date(h.enviado_em).toLocaleDateString("pt-BR")}</span>
                 </p>
             `).join("");
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar histórico: " + erro.message);
+        } catch {
+            showError("Não foi possível carregar o histórico.");
+        } finally {
+            hideLoading();
         }
     }
 

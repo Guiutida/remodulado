@@ -24,6 +24,7 @@
 
     async function carregarTurmas() {
         try {
+            showLoading();
             const resp  = await api("/api/turmas");
             const dados = await resp.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -37,8 +38,10 @@
                     await carregarResumoIATurma(primeiraId);
                     await carregarProgressoTrilhas(primeiraId);
                 }
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar turmas: " + erro.message);
+        } catch {
+            showError("Não foi possível carregar turmas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -82,9 +85,9 @@
                     </tbody>
                 </table>
             `;
-        } catch (erro) {
-            if (container) container.innerHTML = "<p class='erro-inline'>Erro ao carregar desempenho.</p>";
-            mostrarAviso("Erro ao carregar desempenho: " + erro.message);
+        } catch {
+            if (container) container.innerHTML = "<p class='erro-inline'>Não foi possível carregar desempenho.</p>";
+            showError("Não foi possível carregar desempenho.");
         }
     }
 
@@ -114,8 +117,8 @@
                     <a class="botao botao-pequeno" href="atividades.html">Gerenciar</a>
                 </article>
             `).join("");
-        } catch (erro) {
-            mostrarAviso("Erro ao carregar atividades: " + erro.message);
+        } catch {
+            showError("Não foi possível carregar atividades.");
         }
     }
 
@@ -161,9 +164,8 @@
         const container = document.getElementById('progresso-trilhas-container');
         if (!container) return;
 
-        container.innerHTML = '<p><em>Carregando progresso nas trilhas…</em></p>';
-
         try {
+            showLoading();
             const resp  = await api('/api/ia/progresso-trilhas/' + turmaId);
             const dados = await resp.json();
 
@@ -203,9 +205,11 @@
                     `).join('')}
                 </div>
             `).join('');
-        } catch (erro) {
-            container.innerHTML = '<p class="erro-inline">Erro ao carregar progresso nas trilhas.</p>';
-            mostrarAviso('Erro ao carregar progresso: ' + erro.message);
+        } catch {
+            container.innerHTML = '<p class="erro-inline">Não foi possível carregar progresso nas trilhas.</p>';
+            showError('Não foi possível carregar progresso.');
+        } finally {
+            hideLoading();
         }
     }
 

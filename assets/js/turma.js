@@ -17,7 +17,7 @@
     }
 
     function mostrarErro(msg) {
-        mostrarAviso(msg, "erro");
+        showError(msg);
     }
 
     // ─────────── roteador de perfil ───────────
@@ -51,6 +51,7 @@
         if (!lista) return;
 
         try {
+            showLoading();
             const resposta = await api("/api/turmas");
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -82,7 +83,9 @@
                 btn.addEventListener("click", () => abrirModalMembros(btn.dataset.id, btn.dataset.nome));
             });
         } catch (erro) {
-            mostrarErro("Erro ao carregar turmas: " + erro.message);
+            mostrarErro("Não foi possível carregar turmas.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -98,6 +101,7 @@
             const btn = form.querySelector("button[type='submit']");
             if (btn) btn.disabled = true;
             try {
+                showLoading();
                 const resposta = await api("/api/turmas", {
                     method: "POST",
                     body: JSON.stringify({ nome, disciplina })
@@ -105,11 +109,12 @@
                 const dados = await resposta.json();
                 if (dados.status !== "ok") throw new Error(dados.message);
                 form.reset();
-                mostrarAviso(`Turma criada! Código: ${dados.turma.codigo}`, "sucesso");
+                showSuccess(`Turma criada! Código: ${dados.turma.codigo}`);
                 await carregarTurmasProfessor();
             } catch (erro) {
-                mostrarErro("Erro ao criar turma: " + erro.message);
+                mostrarErro("Não foi possível criar turma. Tente novamente.");
             } finally {
+                hideLoading();
                 if (btn) btn.disabled = false;
             }
         });
@@ -122,10 +127,10 @@
         if (!modal || !conteudo) return;
 
         if (titulo) titulo.textContent = turma_nome;
-        conteudo.innerHTML = "<p>Carregando...</p>";
         modal.style.display = "";
 
         try {
+            showLoading();
             const resposta = await api(`/api/turmas/${turmaId}/membros`);
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -159,22 +164,27 @@
                     removerMembro(btn.dataset.turma, btn.dataset.aluno, btn.dataset.nome, turmaId, turma_nome)
                 );
             });
-        } catch (erro) {
-            conteudo.innerHTML = `<p class="erro-inline">${erro.message}</p>`;
+        } catch {
+            conteudo.innerHTML = "<p class='erro-inline'>Não foi possível carregar membros.</p>";
+        } finally {
+            hideLoading();
         }
     }
 
     async function removerMembro(turmaId, alunoId, nomeAluno, turmaIdModal, turmaNomeModal) {
         if (!confirm(`Remover ${nomeAluno} da turma?`)) return;
         try {
+            showLoading();
             const resposta = await api(`/api/turmas/${turmaId}/alunos/${alunoId}`, { method: "DELETE" });
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
-            mostrarAviso(`${nomeAluno} removido(a) da turma.`, "sucesso");
+            showSuccess(`${nomeAluno} removido(a) da turma.`);
             await abrirModalMembros(turmaIdModal, turmaNomeModal);
             await carregarTurmasProfessor();
-        } catch (erro) {
-            mostrarErro("Erro ao remover membro: " + erro.message);
+        } catch {
+            mostrarErro("Não foi possível remover membro. Tente novamente.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -200,6 +210,7 @@
         const secaoComTurma = document.getElementById("secao-com-turma");
 
         try {
+            showLoading();
             const resposta = await api("/api/aluno/turma");
             const dados = await resposta.json();
             if (dados.status !== "ok") throw new Error(dados.message);
@@ -223,8 +234,10 @@
             if (elDisciplina) elDisciplina.textContent = turma.disciplina;
             if (elCodigo) elCodigo.textContent = turma.codigo;
             if (elTotal) elTotal.textContent = turma.total_alunos;
-        } catch (erro) {
-            mostrarErro("Erro ao buscar turma: " + erro.message);
+        } catch {
+            mostrarErro("Não foi possível carregar dados da turma.");
+        } finally {
+            hideLoading();
         }
     }
 
@@ -239,6 +252,7 @@
             const btn = form.querySelector("button[type='submit']");
             if (btn) btn.disabled = true;
             try {
+                showLoading();
                 const resposta = await api("/api/turmas/entrar", {
                     method: "POST",
                     body: JSON.stringify({ codigo })
@@ -246,11 +260,12 @@
                 const dados = await resposta.json();
                 if (dados.status !== "ok") throw new Error(dados.message);
                 form.reset();
-                mostrarAviso(`Entrou na turma: ${dados.turma.nome}!`, "sucesso");
+                showSuccess(`Entrou na turma: ${dados.turma.nome}!`);
                 await carregarTurmaAluno();
             } catch (erro) {
                 mostrarErro(erro.message);
             } finally {
+                hideLoading();
                 if (btn) btn.disabled = false;
             }
         });
