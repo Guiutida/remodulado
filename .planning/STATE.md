@@ -47,7 +47,10 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 
 ## Next Step
 
-Execute Plan 05-04: Deploy Railway — railway.json + MySQL gerenciado + configuração de produção.
+**Plan 05-04** (Deploy Railway): Tarefa 1 concluída (railway.json + .env.example commitados).
+Aguardando configuração manual no painel Railway (criar conta, MySQL plugin, env vars, gerar URL pública).
+
+Quando Railway estiver configurado → retomar com Plan 05-05 (Smoke Test).
 
 ---
-*Last updated: 2026-05-23 after Phase 5 Plan 03 completion*
+*Last updated: 2026-05-23 after Phase 5 Plan 04 Task 1 (railway.json checkpoint pause)*
