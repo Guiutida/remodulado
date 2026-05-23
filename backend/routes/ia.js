@@ -42,9 +42,9 @@ roteador.post('/orientar', autenticar, verificarAluno, iaRateLimit, ia.orientar)
 roteador.post('/gerar-trilha',  autenticar, verificarProfessor, ia.gerarTrilha);
 roteador.post('/salvar-trilha', autenticar, verificarProfessor, ia.salvarTrilha);
 
-// ── Resumos de desempenho — implementados em PLAN-05 ─────────────────────────
-// roteador.get('/resumo-aluno',           autenticar, verificarAluno,     ia.resumoAluno);
-// roteador.get('/resumo-turma/:turmaId',  autenticar, verificarProfessor, ia.resumoTurma);
-// roteador.get('/progresso-trilhas/:turmaId', autenticar, verificarProfessor, ia.progressoTrilhasTurma);
+// ── Resumos de desempenho ─────────────────────────────────────────────────────
+roteador.get('/resumo-aluno',               autenticar, verificarAluno,     ia.resumoAluno);
+roteador.get('/resumo-turma/:turmaId',      autenticar, verificarProfessor, ia.resumoTurma);
+roteador.get('/progresso-trilhas/:turmaId', autenticar, verificarProfessor, ia.progressoTrilhasTurma);
 
 module.exports = roteador;
