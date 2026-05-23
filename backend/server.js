@@ -12,6 +12,7 @@ const rotasAlunos = require("./routes/alunos");
 const rotasTurmas = require("./routes/turmas");
 const rotasTrilhas = require("./routes/trilhas");
 const rotasAtividades = require("./routes/atividades");
+const rotasIa         = require("./routes/ia");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -52,6 +53,7 @@ app.use("/api/aluno", rotasAlunos);
 app.use("/api/turmas", rotasTurmas);
 app.use("/api/trilhas", rotasTrilhas);
 app.use("/api/atividades", rotasAtividades);
+app.use("/api/ia", rotasIa);
 
 app.get("/", (_req, res) => {
     res.sendFile(path.join(pastaPublica, "index.html"));
