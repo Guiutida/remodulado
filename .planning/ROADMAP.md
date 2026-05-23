@@ -133,13 +133,14 @@
 4. Frontend exibe spinner de carregamento durante fetches e mensagem de erro amigável quando API falha — nenhuma tela em branco silenciosa
 5. URL pública acessível (Railway ou Render) onde todos os 5 fluxos principais funcionam: cadastro → turma → trilha → atividade → IA
 
-### Plans
+**Plans:** 5 plans
 
-1. **Migrar foto_perfil de LONGTEXT base64 para sistema de arquivos** — instalar `multer@2.1.1`; criar endpoint `POST /api/perfil/foto` que salva arquivo em `uploads/`; servir `uploads/` como estático; atualizar campo no banco para path do arquivo; script de migration para converter registros base64 existentes
-2. **Adicionar validação de variáveis de ambiente e tratamento global de erros** — criar `config/env.js` que valida presença de todas as vars na inicialização (process.exit(1) se ausente); adicionar middleware `errorHandler` para 404 e 500; registrar `process.on('unhandledRejection')` e `process.on('uncaughtException')` com log estruturado
-3. **Adicionar estados de carregamento e feedback de erro no frontend** — criar utilitário JS `ui.js` com `showLoading()`, `hideLoading()`, `showError(msg)`, `showSuccess(msg)`; aplicar em todos os formulários e fetches das páginas principais; garantir que erro de rede nunca resulta em tela em branco
-4. **Configurar deploy em Railway (ou Render) com MySQL gerenciado** — criar `Dockerfile` ou usar buildpack Node.js; configurar variáveis de ambiente no painel; provisionar MySQL gerenciado; rodar migration script; configurar `railway.json` / `render.yaml` com health check
-5. **Smoke test end-to-end de todos os fluxos antes da entrega** — percorrer manualmente: (1) cadastro + login, (2) professor cria turma + trilha + atividade, (3) aluno entra na turma + completa trilha + responde atividade, (4) tutor IA responde dúvida, (5) painel do professor mostra dados reais; documentar resultado de cada fluxo
+Plans:
+- [ ] 05-01-PLAN.md — Migrar foto_perfil para multer + migration-05.js (INFRA-03)
+- [ ] 05-02-PLAN.md — Validação de env vars + server hardening + 404 handler (INFRA-04)
+- [ ] 05-03-PLAN.md — ui.js + spinner/toast CSS + loading/error states no frontend (INFRA-05)
+- [ ] 05-04-PLAN.md — Deploy Railway: railway.json + MySQL gerenciado + human setup (INFRA-05)
+- [ ] 05-05-PLAN.md — Smoke test end-to-end de todos os 5 fluxos em produção (INFRA-05)
 
 **UI hint**: yes
 
