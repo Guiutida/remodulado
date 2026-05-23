@@ -393,4 +393,93 @@ async function getRespostasAluno(req, res) {
     }
 }
 
-module.exports = { criarAtividade, adicionarQuestao, listarProfessor, getDetalhe, responderAtividade, getRespostasAluno };
+// GET /api/atividades/:id/entregas  (professor)
+// Lista todos os alunos da turma com status e desempenho nesta atividade
+async function getEntregas(req, res) {
+    try {
+        const atividadeId = parseInt(req.params.id, 10);
+
+        if (!(await verificarDonoAtividade(atividadeId, req.usuario.id))) {
+            return res.status(403).json({ status: "erro", message: "Acesso negado." });
+        }
+
+        const [entregas] = await banco.query(
+            `SELECT u.id AS aluno_id, u.nome,
+                    COALESCE(e.status, 'pendente')         AS status,
+                    e.enviado_em,
+                    COUNT(q.id)                            AS total_questoes,
+                    SUM(IF(rq.correta = 1, 1, 0))          AS acertos,
+                    SUM(IF(rq.correta = 0, 1, 0))          AS erros,
+                    SUM(IF(rq.correta IS NULL AND q.tipo = 'dissertativa', 1, 0))
+                                                           AS dissertativas_pendentes
+             FROM turma_alunos ta
+             JOIN usuarios u ON u.id = ta.aluno_id
+             JOIN atividades a ON a.id = ?
+             LEFT JOIN entregas e ON e.atividade_id = ? AND e.aluno_id = u.id
+             LEFT JOIN questoes q ON q.atividade_id = ?
+             LEFT JOIN respostas_questao rq ON rq.questao_id = q.id AND rq.aluno_id = u.id
+             WHERE ta.turma_id = a.turma_id
+             GROUP BY u.id
+             ORDER BY u.nome ASC`,
+            [atividadeId, atividadeId, atividadeId]
+        );
+
+        res.json({ status: "ok", entregas });
+    } catch (erro) {
+        res.status(500).json({ status: "erro", message: "Erro ao buscar entregas.", detalhe: erro.message });
+    }
+}
+
+// GET /api/turmas/:id/desempenho  (professor)
+// Montado em turmas.js — aqui apenas o handler
+async function getDesempenhoTurma(req, res) {
+    try {
+        const turmaId = parseInt(req.params.id, 10);
+
+        // IDOR: verifica que a turma pertence ao professor logado
+        const [turmaCheck] = await banco.query(
+            "SELECT id FROM turmas WHERE id = ? AND professor_id = ? LIMIT 1",
+            [turmaId, req.usuario.id]
+        );
+        if (!turmaCheck.length) {
+            return res.status(403).json({ status: "erro", message: "Acesso negado." });
+        }
+
+        // SUM(IF(...)) em vez de COUNT(...) FILTER (WHERE ...) — sintaxe MySQL 8.0
+        const [desempenho] = await banco.query(
+            `SELECT u.id, u.nome,
+                    COUNT(DISTINCT e.atividade_id)                             AS total_entregues,
+                    ROUND(
+                        SUM(IF(rq.correta = 1, 100, IF(rq.correta = 0, 0, NULL)))
+                        / NULLIF(SUM(IF(rq.correta IS NOT NULL, 1, 0)), 0)
+                    , 0)                                                       AS media_acerto_pct,
+                    u.streak_atual,
+                    u.pontuacao
+             FROM turma_alunos ta
+             JOIN usuarios u ON u.id = ta.aluno_id
+             LEFT JOIN entregas e ON e.aluno_id = u.id
+             LEFT JOIN atividades a ON a.id = e.atividade_id AND a.turma_id = ta.turma_id
+             LEFT JOIN respostas_questao rq ON rq.aluno_id = u.id
+             LEFT JOIN questoes q ON q.id = rq.questao_id AND q.tipo = 'multipla_escolha'
+             WHERE ta.turma_id = ?
+             GROUP BY u.id
+             ORDER BY u.nome ASC`,
+            [turmaId]
+        );
+
+        res.json({ status: "ok", desempenho });
+    } catch (erro) {
+        res.status(500).json({ status: "erro", message: "Erro ao buscar desempenho.", detalhe: erro.message });
+    }
+}
+
+module.exports = {
+    criarAtividade,
+    adicionarQuestao,
+    listarProfessor,
+    getDetalhe,
+    responderAtividade,
+    getRespostasAluno,
+    getEntregas,
+    getDesempenhoTurma
+};
