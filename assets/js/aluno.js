@@ -4,7 +4,6 @@ const fundo = document.querySelector(".fundo-painel");
 const fechar = document.querySelectorAll("[data-fechar]");
 const prefixoConfig = "duopratic_config_";
 let fotoTemporaria = "";
-let funcoesConcluida = false;
 let preferenciasUsuario = {};
 const camposPreferenciaBanco = ["tema", "status", "foto", "notificacoes", "lembretes", "disciplina", "ritmo"];
 
@@ -219,116 +218,6 @@ aplicarNomeUsuario();
 aplicarStatus();
 buscarUsuarioBanco();
 buscarPreferenciasBanco();
-buscarProgressoFuncoesBanco();
-
-function aplicarProgressoFuncoes(concluido = funcoesConcluida) {
-    if (!concluido) return;
-
-    document.querySelectorAll(".destaque-aluno, .cartao-destaque-pequeno").forEach((card) => {
-        const titulo = card.querySelector("h2");
-        if (!titulo || !titulo.textContent.includes("Fun")) return;
-
-        const texto = card.querySelector("p");
-        const barra = card.querySelector(".barra span");
-        const botao = card.querySelector(".botao");
-
-        if (texto) texto.textContent = "Etapa concluída. A próxima atividade já pode ser iniciada pela trilha.";
-        if (barra) barra.style.width = "85%";
-        if (botao) botao.textContent = "Continuar trilha";
-    });
-
-    document.querySelectorAll(".indicadores-aluno .cartao-painel").forEach((card) => {
-        if (card.textContent.includes("Progresso")) {
-            const valor = card.querySelector("strong");
-            if (valor) valor.textContent = "85%";
-        }
-    });
-
-    document.querySelectorAll(".etiqueta").forEach((etiqueta) => {
-        if (etiqueta.textContent.trim() === "72%") {
-            etiqueta.textContent = "85%";
-        }
-    });
-
-    document.querySelectorAll(".etapas-trilha").forEach((lista) => {
-        const etapas = lista.querySelectorAll("span");
-        etapas.forEach((etapa, indice) => {
-            etapa.classList.toggle("feito", indice < 3);
-            etapa.classList.toggle("ativo", indice === 3);
-        });
-    });
-
-    document.querySelectorAll("[data-atividade-funcoes]").forEach((card) => {
-        card.dataset.grupoAtividade = "entregue";
-        const status = card.querySelector("[data-status-funcoes]");
-        const link = card.querySelector("[data-link-funcoes]");
-        if (status) {
-            status.textContent = "Entregue";
-            status.classList.add("status-entregue");
-        }
-        if (link) {
-            link.textContent = "Revisar";
-            link.classList.add("botao-claro");
-        }
-    });
-
-    document.querySelectorAll("[data-total-pendentes]").forEach((campo) => campo.textContent = "2");
-    document.querySelectorAll("[data-total-entregues]").forEach((campo) => campo.textContent = "9");
-    document.querySelectorAll("[data-atividade-principal]").forEach((campo) => {
-        campo.textContent = "Atividade entregue. Você pode revisar o raciocínio ou continuar pela próxima tarefa.";
-    });
-    document.querySelectorAll("[data-botao-atividade-principal]").forEach((botao) => {
-        botao.textContent = "Revisar atividade";
-    });
-}
-
-async function buscarProgressoFuncoesBanco() {
-    const usuario = usuarioLogado();
-    if (!usuario?.id) return;
-
-    try {
-        const resposta = await fetch(`/api/alunos/${usuario.id}/progresso/funcoes`, {
-            headers: { "Authorization": `Bearer ${tokenAtual()}` }
-        });
-        if (resposta.status === 401) {
-            localStorage.removeItem("duopratic_token");
-            localStorage.removeItem("duopratic_usuario");
-            window.location.href = "../pages/login.html";
-            return;
-        }
-        const resultado = await resposta.json();
-
-        if (resposta.ok) {
-            funcoesConcluida = !!resultado.concluido;
-            aplicarProgressoFuncoes();
-        }
-    } catch {
-        mostrarAviso("Nao foi possivel buscar seu progresso");
-    }
-}
-
-async function marcarFuncoesConcluidaBanco() {
-    const usuario = usuarioLogado();
-
-    if (!usuario?.id) {
-        funcoesConcluida = true;
-        aplicarProgressoFuncoes();
-        return;
-    }
-
-    const resposta = await fetch(`/api/alunos/${usuario.id}/progresso/funcoes`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${tokenAtual()}` }
-    });
-    const resultado = await resposta.json();
-
-    if (!resposta.ok) {
-        throw new Error(resultado.message || "Nao foi possivel salvar o progresso.");
-    }
-
-    funcoesConcluida = true;
-    aplicarProgressoFuncoes();
-}
 
 function fecharPaineis() {
     paineis.forEach((painel) => painel.classList.remove("aberto"));
@@ -709,7 +598,6 @@ function atualizarEtapaEstudo() {
     }
 
     if (etapaEstudo === 3) {
-        marcarFuncoesConcluidaBanco().catch((erro) => mostrarAviso(erro.message));
         etapaTexto.textContent = "Etapa 4 de 4";
         aulaTitulo.textContent = "Etapa concluída";
         aulaTexto.textContent = "Você praticou, explicou seu raciocínio e revisou o conceito principal.";
