@@ -2,6 +2,7 @@ const { Router } = require("express");
 const rateLimit = require("express-rate-limit");
 const { autenticar } = require("../middleware/auth");
 const turmasController = require("../controllers/turmasController");
+const atividadesController = require("../controllers/atividadesController");
 
 const roteador = Router();
 
@@ -30,5 +31,7 @@ roteador.get("/", autenticar, verificarProfessor, turmasController.listar);
 roteador.get("/:id/membros", autenticar, verificarProfessor, turmasController.getMembros);
 roteador.delete("/:id/alunos/:alunoId", autenticar, verificarProfessor, turmasController.removerMembro);
 roteador.post("/entrar", autenticar, verificarAluno, limitarEntrar, turmasController.entrar);
+
+roteador.get("/:id/desempenho", autenticar, verificarProfessor, atividadesController.getDesempenhoTurma);
 
 module.exports = roteador;

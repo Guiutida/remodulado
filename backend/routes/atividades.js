@@ -33,6 +33,8 @@ roteador.post("/:id/questoes",  autenticar, verificarProfessor, atividadesContro
 roteador.post("/:id/respostas", autenticar, verificarAluno, atividadesController.responderAtividade);
 roteador.get("/:id/respostas",  autenticar, verificarAluno, atividadesController.getRespostasAluno);
 
+roteador.get("/:id/entregas",   autenticar, verificarProfessor, atividadesController.getEntregas);
+
 roteador.get("/:id",            autenticar,                     atividadesController.getDetalhe);
 // Nota: getDetalhe faz IDOR check internamente para professor e aluno
 // Nota: GET /:id deve ser a ÚLTIMA rota de parâmetro — é curinga e capturaria "/:id/respostas" se viesse antes
