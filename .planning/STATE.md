@@ -31,9 +31,9 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 
 ## Next Step
 
-Execute Plan 05-02: Validação de env vars + server hardening + 404 handler.
+Execute Plan 05-03: ui.js + spinner/toast CSS + loading/error states no frontend.
 
 ---
-*Last updated: 2026-05-27 after Phase 5 Plan 01 completion*
+*Last updated: 2026-05-23 after Phase 5 Plan 02 completion*
 
 
