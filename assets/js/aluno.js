@@ -4,6 +4,7 @@ const fundo = document.querySelector(".fundo-painel");
 const fechar = document.querySelectorAll("[data-fechar]");
 const prefixoConfig = "duopratic_config_";
 let fotoTemporaria = "";
+let arquivoParaUpload = null;
 let preferenciasUsuario = {};
 const camposPreferenciaBanco = ["tema", "status", "foto", "notificacoes", "lembretes", "disciplina", "ritmo"];
 
@@ -455,10 +456,10 @@ function atualizarModalFoto(foto) {
 function carregarFoto(arquivo) {
     if (!arquivo) return;
 
-    const formatos = ["image/jpeg", "image/png", "image/gif"];
+    const formatos = ["image/jpeg", "image/png", "image/webp"];
 
     if (!formatos.includes(arquivo.type)) {
-        mostrarAviso("Use JPG, PNG ou GIF");
+        mostrarAviso("Use JPG, PNG ou WebP");
         return;
     }
 
@@ -467,6 +468,7 @@ function carregarFoto(arquivo) {
         return;
     }
 
+    arquivoParaUpload = arquivo;
     const leitor = new FileReader();
     leitor.onload = () => {
         fotoTemporaria = leitor.result;
@@ -498,13 +500,35 @@ document.querySelectorAll("[data-excluir-foto]").forEach((botao) => {
 });
 
 document.querySelectorAll("[data-salvar-foto]").forEach((botao) => {
-    botao.addEventListener("click", () => {
-        if (!fotoTemporaria) return;
+    botao.addEventListener("click", async () => {
+        if (!arquivoParaUpload) return;
 
-        salvarConfig("foto", fotoTemporaria);
-        aplicarFotoPerfil();
-        fecharModalFoto();
-        mostrarAviso("Foto atualizada");
+        const form = new FormData();
+        form.append('foto', arquivoParaUpload);
+        // NÃO definir Content-Type — browser seta automaticamente com boundary
+
+        const textoOriginal = botao.textContent;
+        botao.disabled = true;
+        botao.textContent = 'Salvando foto\u2026';
+
+        try {
+            const resp = await fetch('/api/usuarios/perfil/foto', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + tokenAtual() },
+                body: form
+            });
+            const dados = await resp.json();
+            if (!resp.ok) throw new Error(dados.message || 'Erro ao salvar foto');
+            salvarConfig('foto', dados.foto);   // salva '/uploads/filename.jpg'
+            aplicarFotoPerfil();
+            fecharModalFoto();
+            mostrarAviso('Foto atualizada!');
+        } catch (erro) {
+            mostrarAviso('Não foi possível salvar a foto. Tente novamente.');
+        } finally {
+            botao.disabled = false;
+            botao.textContent = textoOriginal;
+        }
     });
 });
 
