@@ -252,4 +252,145 @@ async function getDetalhe(req, res) {
     }
 }
 
-module.exports = { criarAtividade, adicionarQuestao, listarProfessor, getDetalhe };
+/**
+ * POST /api/atividades/:id/respostas
+ * Requer perfil aluno (guard na rota).
+ * Body: { respostas: [{ questao_id, resposta }] }
+ * - MC: correta = 1 ou 0; gabarito_correto enviado apenas se correta === 0
+ * - Dissertativa: correta = NULL (Phase 4 corrige com IA)
+ * - Idempotente: ON DUPLICATE KEY UPDATE
+ * - aluno_id SEMPRE de req.usuario.id — nunca do body
+ */
+async function responderAtividade(req, res) {
+    try {
+        const atividadeId = parseInt(req.params.id, 10);
+        const alunoId     = req.usuario.id; // NUNCA do body
+
+        if (!(await verificarAlunoNaAtividade(atividadeId, alunoId))) {
+            return res.status(403).json({ status: "erro", message: "Acesso negado." });
+        }
+
+        const { respostas } = req.body;
+        if (!Array.isArray(respostas) || respostas.length === 0) {
+            return res.status(400).json({ status: "erro", message: "Array de respostas é obrigatório." });
+        }
+
+        const resultados = [];
+        let acertosMC = 0;
+
+        for (const item of respostas) {
+            const questaoId = parseInt(item.questao_id, 10);
+            const resposta  = String(item.resposta || "").trim();
+
+            if (!questaoId || !resposta) continue;
+
+            // Busca questão — inclui gabarito (uso interno do servidor, nunca retornado ao aluno)
+            const [questoes] = await banco.query(
+                "SELECT id, tipo, gabarito FROM questoes WHERE id = ? AND atividade_id = ? LIMIT 1",
+                [questaoId, atividadeId]
+            );
+            if (!questoes.length) continue;
+
+            const questao = questoes[0];
+            let correta   = null; // default: dissertativa aguardando correção
+
+            if (questao.tipo === "multipla_escolha") {
+                correta = resposta.toLowerCase() === questao.gabarito.toLowerCase() ? 1 : 0;
+                if (correta === 1) acertosMC++;
+            }
+
+            // Idempotente: re-submissão atualiza resposta e resultado
+            await banco.query(
+                `INSERT INTO respostas_questao (aluno_id, questao_id, resposta, correta)
+                 VALUES (?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE
+                     resposta      = VALUES(resposta),
+                     correta       = VALUES(correta),
+                     respondido_em = CURRENT_TIMESTAMP`,
+                [alunoId, questaoId, resposta, correta]
+            );
+
+            // Monta resultado para retornar ao aluno
+            const resultado = { questao_id: questaoId, correta };
+            // gabarito_correto: só para MC errada — feedback de correção
+            if (questao.tipo === "multipla_escolha" && correta === 0) {
+                resultado.gabarito_correto = questao.gabarito;
+            }
+            resultados.push(resultado);
+        }
+
+        // Registra entrega (idempotente)
+        await banco.query(
+            `INSERT INTO entregas (atividade_id, aluno_id, status, enviado_em)
+             VALUES (?, ?, 'entregue', NOW())
+             ON DUPLICATE KEY UPDATE
+                 status     = 'entregue',
+                 enviado_em = NOW()`,
+            [atividadeId, alunoId]
+        );
+
+        // Atualiza streak e pontuação
+        // streak_atual:
+        //   - se ultimo_acesso = hoje        → mantém (já estudou hoje)
+        //   - se ultimo_acesso = ontem       → incrementa
+        //   - qualquer outra data (ou NULL)  → reinicia em 1
+        await banco.query(
+            `UPDATE usuarios SET
+                pontuacao    = pontuacao + 10 + (5 * ?),
+                streak_atual = CASE
+                    WHEN DATE(ultimo_acesso) = CURDATE()                                  THEN streak_atual
+                    WHEN DATE(ultimo_acesso) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)        THEN streak_atual + 1
+                    ELSE 1
+                END,
+                ultimo_acesso = CURDATE()
+             WHERE id = ?`,
+            [acertosMC, alunoId]
+        );
+
+        // Busca streak_atual atualizado para incluir na resposta
+        const [usuarioRows] = await banco.query(
+            "SELECT streak_atual FROM usuarios WHERE id = ? LIMIT 1",
+            [alunoId]
+        );
+        const streakAtual = usuarioRows.length ? usuarioRows[0].streak_atual : 1;
+        const pontuacaoGanha = 10 + (5 * acertosMC);
+
+        res.json({ status: "ok", pontuacao_ganha: pontuacaoGanha, streak_atual: streakAtual, resultados });
+
+    } catch (erro) {
+        res.status(500).json({ status: "erro", message: "Erro ao registrar respostas.", detalhe: erro.message });
+    }
+}
+
+/**
+ * GET /api/atividades/:id/respostas
+ * Requer perfil aluno (guard na rota).
+ * Retorna as próprias respostas do aluno para a atividade — SEM campo gabarito.
+ */
+async function getRespostasAluno(req, res) {
+    try {
+        const atividadeId = parseInt(req.params.id, 10);
+        const alunoId     = req.usuario.id;
+
+        if (!(await verificarAlunoNaAtividade(atividadeId, alunoId))) {
+            return res.status(403).json({ status: "erro", message: "Acesso negado." });
+        }
+
+        // Retorna respostas do aluno — SEM campo gabarito
+        const [respostas] = await banco.query(
+            `SELECT rq.questao_id, rq.resposta, rq.correta, q.tipo, rq.respondido_em
+             FROM respostas_questao rq
+             JOIN questoes q ON q.id = rq.questao_id
+             WHERE rq.aluno_id = ? AND q.atividade_id = ?
+             ORDER BY q.ordem ASC`,
+            [alunoId, atividadeId]
+        );
+
+        res.json({ status: "ok", respostas });
+
+    } catch (erro) {
+        res.status(500).json({ status: "erro", message: "Erro ao buscar respostas.", detalhe: erro.message });
+    }
+}
+
+module.exports = { criarAtividade, adicionarQuestao, listarProfessor, getDetalhe, responderAtividade, getRespostasAluno };
