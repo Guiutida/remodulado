@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do professor | DuoPratic</title>
+    <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body class="area-aluno" data-perfil-guard="professor">
+    <aside class="barra-aluno">
+        <a class="marca" href="../index.html"><img class="logo" src="../assets/img/logo-duoPratic-icone.png" alt="Logo DuoPratic"><strong>Duo<span>Pratic</span></strong></a>
+        <nav>
+            <a class="ativo" href="professor.html">Início</a>
+            <a href="#turmas">Turmas</a>
+            <a href="#atividades">Atividades</a>
+            <a href="#avisos">Avisos</a>
+            <a href="configuracoes.html">Configurações</a>
+        </nav>
+    </aside>
+
+    <main class="painel-aluno">
+        <header class="cabecalho-aluno">
+            <div>
+                <span>Bom trabalho, Prof. Ana</span>
+                <h1>Painel do professor.</h1>
+            </div>
+            <div class="acoes-aluno">
+                <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
+                <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
+                <div class="perfil-menu">
+                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">A<span></span></button>
+                    <div class="menu-perfil" data-painel="perfil">
+                        <div class="perfil-resumo"><span class="avatar-mini">A</span><div><strong>Prof. Ana Paula</strong><small>Professor - Online</small><button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button></div></div>
+                        <div class="status-menu" data-status-menu>
+                            <button type="button" data-status="Online"><span class="online"></span>Online</button>
+                            <button type="button" data-status="Ausente"><span class="ausente"></span>Ausente</button>
+                            <button type="button" data-status="Ocupado"><span class="ocupado"></span>Ocupado</button>
+                            <button type="button" data-status="Offline"><span class="offline"></span>Mostrar como offline</button>
+                        </div>
+                        <a href="configuracoes.html">Meu perfil</a><a href="#turmas">Minhas turmas</a><a href="configuracoes.html">Configurações</a><a href="#">Ajuda</a><a href="../index.html">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="continuidade">
+            <article class="cartao-painel destaque-aluno">
+                <span>Ação principal</span>
+                <h2>Revisar entregas da turma</h2>
+                <p>Há 12 respostas novas em Matemática. Veja quem entregou, quem precisa de ajuda e envie um comentário rápido.</p>
+                <div class="barra"><span style="width: 64%"></span></div>
+                <a class="botao" href="#atividades">Ver entregas</a>
+            </article>
+            <div class="indicadores-aluno">
+                <article class="cartao-painel"><span>Turmas</span><strong>3</strong></article>
+                <article class="cartao-painel"><span>Entregas</span><strong>12</strong></article>
+                <article class="cartao-painel"><span>Avisos</span><strong>2</strong></article>
+            </div>
+        </section>
+
+        <section class="grade-dashboard" id="turmas">
+            <article class="cartao-painel">
+                <div class="linha-titulo">
+                    <h2>Minhas turmas</h2>
+                    <a href="#">Nova turma</a>
+                </div>
+                <div class="lista-pagina">
+                    <div class="cartao-linha"><div class="linha-meta"><strong>Matemática - 1º ano</strong><span class="etiqueta">28 alunos</span></div><p>Funções do 1º grau em andamento.</p></div>
+                    <div class="cartao-linha"><div class="linha-meta"><strong>Matemática - 2º ano</strong><span class="etiqueta">24 alunos</span></div><p>Revisão de equações e gráficos.</p></div>
+                </div>
+            </article>
+
+            <article class="cartao-painel" id="atividades">
+                <div class="linha-titulo">
+                    <h2>Atividades</h2>
+                    <a href="#">Criar atividade</a>
+                </div>
+                <div class="lista-atividades professor-lista">
+                    <article class="item-atividade">
+                        <div><div class="linha-meta"><strong>Funções do 1º grau</strong><span class="etiqueta">12 entregas</span></div><p>Prazo sexta-feira. 6 alunos ainda pendentes.</p></div>
+                        <a class="botao botao-pequeno" href="#">Corrigir</a>
+                    </article>
+                    <article class="item-atividade">
+                        <div><div class="linha-meta"><strong>Interpretação de texto</strong><span class="etiqueta">Rascunho</span></div><p>Atividade pronta para publicar.</p></div>
+                        <a class="botao botao-pequeno botao-claro" href="#">Editar</a>
+                    </article>
+                </div>
+            </article>
+
+            <article class="cartao-painel" id="avisos">
+                <div class="linha-titulo">
+                    <h2>Avisos da turma</h2>
+                    <a href="#">Novo aviso</a>
+                </div>
+                <div class="lista-acoes">
+                    <p><strong>Revisão sexta-feira</strong><span>Matemática - 1º ano</span></p>
+                    <p><strong>Material complementar</strong><span>Publicado hoje</span></p>
+                </div>
+            </article>
+
+            <article class="cartao-painel">
+                <h2>Acompanhamento</h2>
+                <div class="lista-acoes">
+                    <p><strong>Precisam de atenção</strong><span>5 alunos</span></p>
+                    <p><strong>Acima da meta</strong><span>14 alunos</span></p>
+                    <p><strong>Sem acesso recente</strong><span>3 alunos</span></p>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <div class="fundo-painel" data-fechar></div>
+    <aside class="painel-lateral" data-painel="notificacoes" aria-label="Notificações">
+        <header><div><h2>Notificações</h2><span>Professor</span></div><button type="button" data-fechar aria-label="Fechar">&times;</button></header>
+        <section class="lista-notificacoes">
+            <article><strong>Novas entregas</strong><p>12 alunos enviaram a atividade de funções do 1º grau.</p><span>Agora</span></article>
+            <article><strong>Aviso visualizado</strong><p>21 alunos visualizaram o aviso da revisão.</p><span>Hoje</span></article>
+            <article><strong>Aluno precisa de apoio</strong><p>Marina pediu ajuda em interpretação de texto.</p><span>Ontem</span></article>
+        </section>
+    </aside>
+    <script src="../assets/js/auth-guard.js"></script>
+    <script src="../assets/js/aluno.js"></script>
+</body>
+</html>
