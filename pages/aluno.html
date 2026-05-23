@@ -24,20 +24,19 @@
     <main class="painel-aluno">
         <header class="cabecalho-aluno">
             <div>
-                <span>Bom estudo, Guilherme</span>
+                <span>Bom estudo, <span data-saudacao-nome>...</span></span>
                 <h1>Seu plano de hoje.</h1>
             </div>
             <div class="acoes-aluno">
                 <a class="icone-topo" href="configuracoes.html" aria-label="Configurações">&#9881;</a>
                 <button class="icone-topo notificacao" type="button" data-abrir="notificacoes" aria-label="Notificações">&#128276;</button>
                 <div class="perfil-menu">
-                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil">G<span></span></button>
+                    <button class="avatar-aluno" type="button" data-abrir="perfil" aria-label="Perfil"><span data-inicial-usuario>?</span><span></span></button>
                     <div class="menu-perfil" data-painel="perfil">
                         <div class="perfil-resumo">
-                            <span class="avatar-mini">G</span>
+                            <span class="avatar-mini" data-inicial-usuario-mini>?</span>
                             <div>
-                                <strong data-nome-usuario>Guilherme</strong>
-                                
+                                <strong data-nome-usuario>Carregando...</strong>
                                 <button class="status-atual" type="button" data-status-botao><span data-status-ponto></span><em data-status-texto>Online</em>&#8964;</button>
                             </div>
                         </div>
@@ -60,16 +59,16 @@
         <section class="continuidade">
             <article class="cartao-painel destaque-aluno">
                 <span>Continuar de onde parou</span>
-                <h2>Funções do 1º grau</h2>
-                <p>Próxima etapa: exercício guiado. Resolva uma questão curta e explique seu raciocínio.</p>
-                <div class="barra"><span style="width: 72%"></span></div>
-                <a class="botao" href="estudo.html">Começar atividade</a>
+                <h2 data-proxima-atividade-titulo>Carregando...</h2>
+                <p data-proxima-atividade-desc>Aguardando dados...</p>
+                <div class="barra"><span data-barra-progresso style="width: 0%"></span></div>
+                <a class="botao" data-link-proxima-atividade href="atividades.html">Ver atividades</a>
             </article>
 
             <div class="indicadores-aluno">
-                <article class="cartao-painel"><span>Progresso</span><strong>72%</strong></article>
-                <article class="cartao-painel"><span>Sequência</span><strong>5 dias</strong></article>
-                <article class="cartao-painel"><span>Revisão</span><strong>3 itens</strong></article>
+                <article class="cartao-painel"><span>Progresso</span><strong data-indicador-progresso>--</strong></article>
+                <article class="cartao-painel"><span>Sequência</span><strong data-indicador-streak>--</strong></article>
+                <article class="cartao-painel"><span>Pendentes</span><strong data-indicador-pendentes>--</strong></article>
             </div>
         </section>
 
@@ -79,10 +78,8 @@
                     <h2>Hoje</h2>
                     <a href="atividades.html">Ver atividades</a>
                 </div>
-                <div class="lista-acoes">
-                    <p><strong>Exercício guiado</strong><span>Funções do 1º grau</span></p>
-                    <p><strong>Revisão rápida</strong><span>3 questões pendentes</span></p>
-                    <p><strong>Leitura curta</strong><span>Interpretação de texto</span></p>
+                <div class="lista-acoes" id="lista-hoje">
+                    <p><em>Carregando atividades...</em></p>
                 </div>
             </article>
 
@@ -112,13 +109,20 @@
                     <h2>Caminho da trilha</h2>
                     <a href="trilhas.html">Ver completa</a>
                 </div>
-                <div class="etapas-trilha">
-                    <span class="feito">Base</span>
-                    <span class="ativo">Prática</span>
-                    <span>Revisão</span>
-                    <span>Desafio</span>
+                <div class="etapas-trilha" id="etapas-trilha-painel">
+                    <span><em>Carregando...</em></span>
                 </div>
             </article>
+        </section>
+
+        <section class="cartao-painel" id="secao-historico">
+            <div class="linha-titulo">
+                <h2>Histórico de atividades</h2>
+                <a class="botao botao-pequeno" href="atividades.html">Ver todas</a>
+            </div>
+            <div id="lista-historico">
+                <p><em>Carregando histórico...</em></p>
+            </div>
         </section>
     </main>
 
@@ -154,5 +158,6 @@
 
     <script src="../assets/js/auth-guard.js"></script>
     <script src="../assets/js/aluno.js"></script>
+    <script src="../assets/js/painel.js"></script>
 </body>
 </html>
