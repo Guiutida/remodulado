@@ -35,3 +35,4 @@ Run `/gsd-plan-phase 2` to plan Phase 2: Turmas e Trilhas.
 ---
 *Last updated: 2026-05-22 after Phase 1 completion*
 
+
