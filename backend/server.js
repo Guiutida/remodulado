@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { autenticar } = require("./middleware/auth");
 const SALT_ROUNDS = 12;
 
 const app = express();
@@ -44,87 +45,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static(pastaPublica));
 
-async function garantirAtividadeFuncoes(alunoId) {
-    const [alunos] = await banco.query(
-        "SELECT id FROM usuarios WHERE id = ? AND perfil = 'aluno' LIMIT 1",
-        [alunoId]
-    );
-
-    if (!alunos.length) {
-        return null;
-    }
-
-    const [professores] = await banco.query(
-        "SELECT id FROM usuarios WHERE email = ? LIMIT 1",
-        ["ana@duopratic.local"]
-    );
-
-    let professorId = professores[0]?.id;
-
-    if (!professorId) {
-        const [professor] = await banco.query(
-            "INSERT INTO usuarios (nome, email, senha, perfil) VALUES (?, ?, ?, ?)",
-            ["Prof. Ana Paula", "ana@duopratic.local", "123456", "professor"]
-        );
-        professorId = professor.insertId;
-    }
-
-    const [turmas] = await banco.query(
-        "SELECT id FROM turmas WHERE codigo = ? LIMIT 1",
-        ["MAT-102"]
-    );
-
-    let turmaId = turmas[0]?.id;
-
-    if (!turmaId) {
-        const [turma] = await banco.query(
-            "INSERT INTO turmas (nome, disciplina, codigo, professor_id) VALUES (?, ?, ?, ?)",
-            ["Matematica - 1 ano", "Matematica", "MAT-102", professorId]
-        );
-        turmaId = turma.insertId;
-    }
-
-    await banco.query(
-        "INSERT IGNORE INTO turma_alunos (turma_id, aluno_id) VALUES (?, ?)",
-        [turmaId, alunoId]
-    );
-
-    const [atividades] = await banco.query(
-        "SELECT id FROM atividades WHERE turma_id = ? AND titulo = ? LIMIT 1",
-        [turmaId, "Funcoes do 1 grau"]
-    );
-
-    if (atividades.length) {
-        return atividades[0];
-    }
-
-    const [atividade] = await banco.query(
-        "INSERT INTO atividades (turma_id, titulo, descricao) VALUES (?, ?, ?)",
-        [turmaId, "Funcoes do 1 grau", "Pratica guiada sobre funcao do 1 grau."]
-    );
-
-    return { id: atividade.insertId };
-}
-
-async function garantirTabelaPreferencias() {
-    await banco.query(`
-        CREATE TABLE IF NOT EXISTS preferencias_usuario (
-            usuario_id INT PRIMARY KEY,
-            tema VARCHAR(20) NOT NULL DEFAULT 'Claro',
-            status_usuario VARCHAR(20) NOT NULL DEFAULT 'Online',
-            foto_perfil LONGTEXT,
-            notificacoes_turma TINYINT(1) NOT NULL DEFAULT 1,
-            lembretes_estudo VARCHAR(30) NOT NULL DEFAULT 'Diários',
-            disciplina_principal VARCHAR(80) NOT NULL DEFAULT 'Matemática',
-            ritmo_semanal VARCHAR(40) NOT NULL DEFAULT '5 atividades',
-            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB
-    `);
-}
-
 async function garantirPreferencias(usuarioId) {
-    await garantirTabelaPreferencias();
     await banco.query(
         "INSERT IGNORE INTO preferencias_usuario (usuario_id) VALUES (?)",
         [usuarioId]
@@ -243,7 +164,12 @@ app.post("/api/login", limitadorAuth, async (req, res) => {
     }
 });
 
-app.get("/api/usuarios/:id", async (req, res) => {
+app.get("/api/usuarios/:id", autenticar, async (req, res) => {
+    const idRequisitado = parseInt(req.params.id, 10);
+    if (req.usuario.id !== idRequisitado && req.usuario.perfil !== "professor") {
+        return res.status(403).json({ status: "erro", message: "Acesso negado." });
+    }
+
     try {
         const [usuarios] = await banco.query(
             "SELECT id, nome, email, perfil FROM usuarios WHERE id = ? LIMIT 1",
@@ -260,7 +186,12 @@ app.get("/api/usuarios/:id", async (req, res) => {
     }
 });
 
-app.put("/api/usuarios/:id", async (req, res) => {
+app.put("/api/usuarios/:id", autenticar, async (req, res) => {
+    const idRequisitado = parseInt(req.params.id, 10);
+    if (req.usuario.id !== idRequisitado && req.usuario.perfil !== "professor") {
+        return res.status(403).json({ status: "erro", message: "Acesso negado." });
+    }
+
     const { nome, email, senha } = req.body;
     const campos = [];
     const valores = [];
@@ -304,7 +235,12 @@ app.put("/api/usuarios/:id", async (req, res) => {
     }
 });
 
-app.get("/api/usuarios/:id/preferencias", async (req, res) => {
+app.get("/api/usuarios/:id/preferencias", autenticar, async (req, res) => {
+    const idRequisitado = parseInt(req.params.id, 10);
+    if (req.usuario.id !== idRequisitado && req.usuario.perfil !== "professor") {
+        return res.status(403).json({ status: "erro", message: "Acesso negado." });
+    }
+
     try {
         const [usuarios] = await banco.query(
             "SELECT id FROM usuarios WHERE id = ? LIMIT 1",
@@ -328,7 +264,12 @@ app.get("/api/usuarios/:id/preferencias", async (req, res) => {
     }
 });
 
-app.put("/api/usuarios/:id/preferencias", async (req, res) => {
+app.put("/api/usuarios/:id/preferencias", autenticar, async (req, res) => {
+    const idRequisitado = parseInt(req.params.id, 10);
+    if (req.usuario.id !== idRequisitado && req.usuario.perfil !== "professor") {
+        return res.status(403).json({ status: "erro", message: "Acesso negado." });
+    }
+
     const campos = [];
     const valores = [];
 
@@ -369,17 +310,23 @@ app.put("/api/usuarios/:id/preferencias", async (req, res) => {
     }
 });
 
-app.get("/api/alunos/:id/progresso/funcoes", async (req, res) => {
-    try {
-        const atividade = await garantirAtividadeFuncoes(req.params.id);
+app.get("/api/alunos/:id/progresso/funcoes", autenticar, async (req, res) => {
+    const idRequisitado = parseInt(req.params.id, 10);
+    if (req.usuario.id !== idRequisitado) {
+        return res.status(403).json({ status: "erro", message: "Acesso negado." });
+    }
 
-        if (!atividade) {
-            return res.status(404).json({ status: "erro", message: "Aluno nao encontrado." });
-        }
+    try {
+        const alunoId = idRequisitado;
 
         const [entregas] = await banco.query(
-            "SELECT status, enviado_em FROM entregas WHERE atividade_id = ? AND aluno_id = ? LIMIT 1",
-            [atividade.id, req.params.id]
+            `SELECT e.status, e.enviado_em
+             FROM entregas e
+             JOIN atividades a ON a.id = e.atividade_id
+             WHERE e.aluno_id = ?
+               AND a.titulo = 'Funcoes do 1 grau'
+             LIMIT 1`,
+            [alunoId]
         );
 
         const entrega = entregas[0];
@@ -387,7 +334,6 @@ app.get("/api/alunos/:id/progresso/funcoes", async (req, res) => {
 
         res.json({
             status: "ok",
-            atividade_id: atividade.id,
             entrega: entrega?.status || "pendente",
             concluido,
             progresso: concluido ? 85 : 72
@@ -397,13 +343,24 @@ app.get("/api/alunos/:id/progresso/funcoes", async (req, res) => {
     }
 });
 
-app.post("/api/alunos/:id/progresso/funcoes", async (req, res) => {
-    try {
-        const atividade = await garantirAtividadeFuncoes(req.params.id);
+app.post("/api/alunos/:id/progresso/funcoes", autenticar, async (req, res) => {
+    const idRequisitado = parseInt(req.params.id, 10);
+    if (req.usuario.id !== idRequisitado) {
+        return res.status(403).json({ status: "erro", message: "Acesso negado." });
+    }
 
-        if (!atividade) {
-            return res.status(404).json({ status: "erro", message: "Aluno nao encontrado." });
+    try {
+        const alunoId = idRequisitado;
+
+        const [atividades] = await banco.query(
+            "SELECT id FROM atividades WHERE titulo = 'Funcoes do 1 grau' LIMIT 1"
+        );
+
+        if (!atividades.length) {
+            return res.status(404).json({ status: "erro", message: "Atividade não encontrada." });
         }
+
+        const atividadeId = atividades[0].id;
 
         await banco.query(
             `INSERT INTO entregas (atividade_id, aluno_id, resposta, status, enviado_em)
@@ -412,12 +369,12 @@ app.post("/api/alunos/:id/progresso/funcoes", async (req, res) => {
                 resposta = VALUES(resposta),
                 status = 'entregue',
                 enviado_em = CURRENT_TIMESTAMP`,
-            [atividade.id, req.params.id, "Etapa de Funcoes do 1 grau concluida."]
+            [atividadeId, alunoId, "Etapa de Funcoes do 1 grau concluida."]
         );
 
         res.json({
             status: "ok",
-            atividade_id: atividade.id,
+            atividade_id: atividadeId,
             entrega: "entregue",
             concluido: true,
             progresso: 85
