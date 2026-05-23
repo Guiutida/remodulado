@@ -98,6 +98,40 @@
             </article>
         </section>
     </div>
+        <!-- Seção IA: visível apenas para professores (ocultada via JS se aluno) -->
+        <section class="grade-ia" data-secao-professor-ia style="display:none">
+            <article class="cartao-painel">
+                <span>Inteligência Artificial</span>
+                <h2>Gerar trilha com IA</h2>
+                <p>Descreva o tema e a IA cria uma trilha completa para você revisar antes de publicar.</p>
+
+                <form data-form-gerar-trilha-ia>
+                    <label class="campo">Turma de destino
+                        <select name="turma_id" required>
+                            <option value="">Selecione a turma...</option>
+                        </select>
+                    </label>
+                    <label class="campo">Tema da trilha
+                        <input type="text" name="tema" maxlength="200"
+                               placeholder="Ex: Funções do 1º grau, Revolução Industrial..." required />
+                    </label>
+                    <label class="campo">Nível de ensino
+                        <select name="nivel" required>
+                            <option value="">Selecione...</option>
+                            <option value="fundamental">Ensino Fundamental</option>
+                            <option value="medio">Ensino Médio</option>
+                        </select>
+                    </label>
+                    <label class="campo">Quantidade de etapas
+                        <input type="number" name="qtdEtapas" min="3" max="10" value="5" />
+                    </label>
+                    <button class="botao" type="submit">Gerar com IA</button>
+                </form>
+            </article>
+
+            <!-- Preview editável aparece aqui após geração -->
+            <div data-preview-trilha-ia style="display:none"></div>
+        </section>
     </main>
 
     <div class="fundo-painel" data-fechar></div>
@@ -151,5 +185,15 @@
     <script src="../assets/js/auth-guard.js"></script>
     <script src="../assets/js/aluno.js"></script>
     <script src="../assets/js/trilhas.js"></script>
+    <script src="../assets/js/trilhas-ia.js"></script>
+    <script>
+        (function() {
+            var u = (function() { try { return JSON.parse(localStorage.getItem('duopratic_usuario')); } catch (e) { return null; } })();
+            if (u && u.perfil === 'professor') {
+                var s = document.querySelector('[data-secao-professor-ia]');
+                if (s) s.style.display = '';
+            }
+        })();
+    </script>
 </body>
 </html>
