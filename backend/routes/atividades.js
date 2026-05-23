@@ -25,7 +25,16 @@ roteador.get("/",   autenticar, verificarProfessor, atividadesController.listarP
 
 // ── Rotas com parâmetro ───────────────────────────────────────────────────────
 roteador.post("/:id/questoes",  autenticar, verificarProfessor, atividadesController.adicionarQuestao);
+
+// ── Rotas do aluno ────────────────────────────────────────────────────────────
+// POST /:id/respostas — submeter respostas (aluno)
+// GET  /:id/respostas — consultar próprias respostas (aluno)
+// Ambas ficam APÓS as rotas literais "/" e APÓS "/:id/questoes" (professor)
+roteador.post("/:id/respostas", autenticar, verificarAluno, atividadesController.responderAtividade);
+roteador.get("/:id/respostas",  autenticar, verificarAluno, atividadesController.getRespostasAluno);
+
 roteador.get("/:id",            autenticar,                     atividadesController.getDetalhe);
 // Nota: getDetalhe faz IDOR check internamente para professor e aluno
+// Nota: GET /:id deve ser a ÚLTIMA rota de parâmetro — é curinga e capturaria "/:id/respostas" se viesse antes
 
 module.exports = roteador;
