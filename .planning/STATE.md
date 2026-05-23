@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-05-23T19:25:13.099Z"
+progress:
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 5
+  completed_plans: 3
+  percent: 0
+---
+
 # STATE.md — DuoPratic
 
 ## Project Reference
@@ -24,6 +38,8 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 
 ## Active Decisions
 
+- ui.js expõe apenas 4 globals (showLoading/hideLoading/showError/showSuccess) sem redeclarar mostrarAviso de aluno.js
+- Spinner criado lazily (obterSpinner) — não exige markup na HTML; criado na primeira chamada a showLoading()
 - Gemini 2.5 Flash (`@google/genai@2.6.0`) como provider de IA — free tier cobre demo do TCC
 - SSE (Server-Sent Events) para streaming das respostas da IA — sem dependências extras
 - Sem framework frontend — vanilla HTML/CSS/JS mantido por consistência com a base existente
@@ -31,9 +47,7 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 
 ## Next Step
 
-Execute Plan 05-03: ui.js + spinner/toast CSS + loading/error states no frontend.
+Execute Plan 05-04: Deploy Railway — railway.json + MySQL gerenciado + configuração de produção.
 
 ---
-*Last updated: 2026-05-23 after Phase 5 Plan 02 completion*
-
-
+*Last updated: 2026-05-23 after Phase 5 Plan 03 completion*

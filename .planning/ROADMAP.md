@@ -138,7 +138,7 @@
 Plans:
 - [x] 05-01-PLAN.md — Migrar foto_perfil para multer + migration-05.js (INFRA-03)
 - [x] 05-02-PLAN.md — Validação de env vars + server hardening + 404 handler (INFRA-04)
-- [ ] 05-03-PLAN.md — ui.js + spinner/toast CSS + loading/error states no frontend (INFRA-05)
+- [x] 05-03-PLAN.md — ui.js + spinner/toast CSS + loading/error states no frontend (INFRA-05)
 - [ ] 05-04-PLAN.md — Deploy Railway: railway.json + MySQL gerenciado + human setup (INFRA-05)
 - [ ] 05-05-PLAN.md — Smoke test end-to-end de todos os 5 fluxos em produção (INFRA-05)
 
@@ -154,7 +154,7 @@ Plans:
 | 2. Turmas e Trilhas | 5/5 | ✅ Complete | 2026-05-22 |
 | 3. Atividades e Painel do Aluno | 5/5 | ✅ Complete | 2026-05-22 |
 | 4. Integração com IA | 5/5 | ✅ Complete | 2026-05-23 |
-| 5. Polimento e Deploy | 2/5 | 🔄 In Progress | - |
+| 5. Polimento e Deploy | 3/5 | 🔄 In Progress | - |
 
 ---
 
