@@ -4,6 +4,10 @@ const express = require("express");
 const path = require("path");
 const banco = require("./db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const SALT_ROUNDS = 12;
 
 const app = express();
@@ -19,19 +23,26 @@ const camposPreferencias = {
     ritmo: "ritmo_semanal"
 };
 
+const limitadorAuth = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { status: "erro", message: "Muitas tentativas. Tente novamente em 15 minutos." }
+});
+
+// Segurança HTTP — helmet adiciona ~12 headers de proteção (CSP, HSTS, X-Frame-Options, etc.)
+app.use(helmet());
+
+// CORS — substituir wildcard; incluir Authorization para suportar Bearer token
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 app.use(express.static(pastaPublica));
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-
-    if (req.method === "OPTIONS") {
-        return res.sendStatus(204);
-    }
-
-    next();
-});
 
 async function garantirAtividadeFuncoes(alunoId) {
     const [alunos] = await banco.query(
@@ -157,7 +168,7 @@ app.get("/api/db/status", async (_req, res) => {
     }
 });
 
-app.post("/api/cadastro", async (req, res) => {
+app.post("/api/cadastro", limitadorAuth, async (req, res) => {
     const { nome, email, senha, perfil } = req.body;
 
     if (!nome || !email || !senha || !perfil) {
@@ -193,7 +204,7 @@ app.post("/api/cadastro", async (req, res) => {
     }
 });
 
-app.post("/api/login", async (req, res) => {
+app.post("/api/login", limitadorAuth, async (req, res) => {
     const { email, senha, perfil } = req.body;
 
     if (!email || !senha || !perfil) {
@@ -218,7 +229,15 @@ app.post("/api/login", async (req, res) => {
         }
 
         const { senha: _descartada, ...usuarioSeguro } = usuario;
-        res.json({ status: "ok", usuario: usuarioSeguro });
+
+        // Emitir token JWT
+        const token = jwt.sign(
+            { id: usuario.id, perfil: usuario.perfil },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.json({ status: "ok", token, usuario: usuarioSeguro });
     } catch (erro) {
         res.status(500).json({ status: "erro", message: "Erro ao entrar.", detalhe: erro.message });
     }
