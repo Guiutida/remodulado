@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-05-24T15:30:00-03:00",
+  "phase": "05",
+  "phase_name": "Polimento e Deploy",
+  "phase_dir": ".planning/phases/05-polimento-e-deploy",
+  "plan": 4,
+  "task": 2,
+  "total_tasks": 3,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": "05-01", "name": "Migrar foto_perfil para multer + migration-05.js", "status": "done", "commit": "see ROADMAP"},
+    {"id": "05-02", "name": "Validação de env vars + server hardening + 404 handler", "status": "done", "commit": "see ROADMAP"},
+    {"id": "05-03", "name": "ui.js + spinner/toast CSS + loading/error states", "status": "done", "commit": "4ac6d14"},
+    {"id": "05-04-task1", "name": "Criar railway.json + atualizar .env.example", "status": "done", "commit": "e840ea4"}
+  ],
+  "remaining_tasks": [
+    {"id": "05-04-task2", "name": "Setup manual Railway (human action)", "status": "blocked_human_action"},
+    {"id": "05-04-task3", "name": "Verificar health check na URL pública", "status": "not_started"},
+    {"id": "05-05", "name": "Smoke test end-to-end 5 fluxos em produção", "status": "not_started"}
+  ],
+  "blockers": [
+    {
+      "description": "Plan 05-04 Task 2: Railway manual setup — criar conta, conectar repo, MySQL plugin, env vars, URL pública",
+      "type": "human_action",
+      "workaround": "None — must be done manually at https://railway.app"
+    }
+  ],
+  "human_actions_pending": [
+    {
+      "action": "Complete Railway manual setup (see 05-04-PLAN.md Tasks 2+3 for exact steps)",
+      "context": "railway.json is ready (commit e840ea4); Railway account, MySQL plugin, env vars and public URL must be configured manually",
+      "blocking": true
+    }
+  ],
+  "decisions": [
+    {"decision": "Railway as deploy platform", "rationale": "Node.js + MySQL managed, no Dockerfile needed", "phase": "05"},
+    {"decision": "Filesystem ephemeral for uploads", "rationale": "Acceptable for TCC demo", "phase": "05"},
+    {"decision": "multer@2.1.1 DiskStorage", "rationale": "Eliminates base64 from DB", "phase": "05"},
+    {"decision": "ui.js 4 globals only (showLoading/hideLoading/showError/showSuccess)", "rationale": "No conflict with aluno.js mostrarAviso", "phase": "05"}
+  ],
+  "uncommitted_files": [
+    ".planning/phases/05-polimento-e-deploy/.continue-here.md",
+    ".planning/HANDOFF.json"
+  ],
+  "next_action": "Either (A) complete /gsd-discuss-phase 5 to get CONTEXT.md, or (B) go directly to Railway manual setup (Plan 05-04 Task 2) — that is the real blocker for TCC presentation",
+  "context_notes": "User paused /gsd-discuss-phase 5 at the first gray area question (deploy platform). No CONTEXT.md captured yet. The urgent path is completing Railway setup manually, not the discuss-phase."
+}
