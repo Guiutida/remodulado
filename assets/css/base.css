@@ -4,8 +4,8 @@
     --azul-escuro: #102a52;
     --texto: #0f2344;
     --fraco: #52627a;
-    --borda: #ffffff;
-    --fundo: #ffffff;
+    --borda: #dbe2ee;
+    --fundo: #f0f4fa;
     --branco: #fff;
 }
 body.tema-escuro {
@@ -267,7 +267,7 @@ footer p { margin: 0; }
 .troca-formulario { margin: 12px 0 0; text-align: center; }
 .troca-formulario a { color: var(--azul); font-weight: 900; }
 .voltar-inicio { margin-top: 8px; color: var(--azul); font-size: 1rem; font-weight: 900; }
-.area-aluno { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; background: #f4f7fb; }
+.area-aluno { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; background: #e4ecf7; }
 body.tema-escuro.area-aluno { background: #101827; }
 body.tema-escuro .barra-aluno,
 body.tema-escuro .cartao-painel,
