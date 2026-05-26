@@ -35,16 +35,16 @@ async function cadastrar(req, res) {
 }
 
 async function login(req, res) {
-    const { email, senha, perfil } = req.body;
+    const { email, senha } = req.body;
 
-    if (!email || !senha || !perfil) {
+    if (!email || !senha) {
         return res.status(400).json({ status: "erro", message: "Preencha todos os campos." });
     }
 
     try {
         const [usuarios] = await banco.query(
-            "SELECT id, nome, email, perfil, senha FROM usuarios WHERE email = ? AND perfil = ? LIMIT 1",
-            [email, perfil]
+            "SELECT id, nome, email, perfil, senha FROM usuarios WHERE email = ? LIMIT 1",
+            [email]
         );
 
         if (!usuarios.length) {
