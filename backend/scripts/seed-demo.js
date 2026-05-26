@@ -29,6 +29,13 @@ const PROFESSOR = {
     perfil: 'professor',
 };
 
+const ALUNO = {
+    nome: 'João Pedro Santos',
+    email: 'joao.pedro@duopratic.com',
+    senha: 'Aluno@2025',
+    perfil: 'aluno',
+};
+
 const TURMA = {
     nome: '9º Ano A',
     disciplina: 'Matemática',
@@ -165,7 +172,43 @@ const ATIVIDADES = [
     },
 ];
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+const TRILHA = {
+    titulo: 'Fundamentos de Matemática — 9º Ano',
+    disciplina: 'Matemática',
+    descricao: 'Trilha de revisão dos principais conteúdos do 9º ano: álgebra, geometria e estatística.',
+    etapas: [
+        {
+            ordem: 1,
+            titulo: 'Introdução às Equações do 2º Grau',
+            tipo: 'texto',
+            conteudo: 'Uma equação do 2º grau tem a forma ax² + bx + c = 0, onde a ≠ 0. O discriminante Δ = b² − 4ac determina a natureza das raízes:\n\n• Δ > 0: duas raízes reais distintas\n• Δ = 0: uma raiz real dupla\n• Δ < 0: nenhuma raiz real\n\nA fórmula de Bhaskara: x = (−b ± √Δ) / 2a',
+        },
+        {
+            ordem: 2,
+            titulo: 'Vídeo: Resolvendo Equações com Bhaskara',
+            tipo: 'video',
+            conteudo: 'https://www.youtube.com/watch?v=IKsi-DQU2zo',
+        },
+        {
+            ordem: 3,
+            titulo: 'Teorema de Pitágoras — Conceito e Aplicações',
+            tipo: 'texto',
+            conteudo: 'Em todo triângulo retângulo, o quadrado da hipotenusa é igual à soma dos quadrados dos catetos:\n\nc² = a² + b²\n\nExemplo clássico: catetos 3 e 4 → hipotenusa = 5 (terna pitagórica).\n\nAplicações: calcular diagonais, distâncias e verificar ângulos retos.',
+        },
+        {
+            ordem: 4,
+            titulo: 'Medidas de Tendência Central',
+            tipo: 'texto',
+            conteudo: '• Média aritmética: soma de todos os valores dividida pela quantidade\n• Mediana: valor central após ordenar o conjunto\n• Moda: valor que aparece com maior frequência\n\nEssas medidas resumem um conjunto de dados e são a base da estatística descritiva.',
+        },
+        {
+            ordem: 5,
+            titulo: 'Khan Academy — Estatística Básica',
+            tipo: 'link',
+            conteudo: 'https://pt.khanacademy.org/math/statistics-probability/summarizing-quantitative-data',
+        },
+    ],
+};
 
 function diasAPartirDeHoje(dias) {
     const d = new Date();
@@ -267,12 +310,120 @@ async function main() {
         }
     }
 
+    // 4. Aluno
+    console.log('\n🎓 Aluno...');
+    let alunoId;
+    const [alunosExist] = await banco.query(
+        'SELECT id FROM usuarios WHERE email = ? LIMIT 1',
+        [ALUNO.email]
+    );
+    if (alunosExist.length) {
+        alunoId = alunosExist[0].id;
+        skip(`Aluno já existe (id=${alunoId})`);
+    } else {
+        const hash = await bcrypt.hash(ALUNO.senha, SALT_ROUNDS);
+        const [res] = await banco.query(
+            'INSERT INTO usuarios (nome, email, senha, perfil, pontuacao, streak_atual, ultimo_acesso) VALUES (?, ?, ?, ?, ?, ?, CURDATE())',
+            [ALUNO.nome, ALUNO.email, hash, ALUNO.perfil, 120, 3]
+        );
+        alunoId = res.insertId;
+        ok(`Aluno criado (id=${alunoId}) — ${ALUNO.email} / ${ALUNO.senha}`);
+        await banco.query('INSERT IGNORE INTO preferencias_usuario (usuario_id) VALUES (?)', [alunoId]);
+    }
+
+    // Aluno entra na turma
+    const [taExist] = await banco.query(
+        'SELECT id FROM turma_alunos WHERE turma_id = ? AND aluno_id = ? LIMIT 1',
+        [turmaId, alunoId]
+    );
+    if (taExist.length) {
+        skip('Aluno já está na turma');
+    } else {
+        await banco.query(
+            'INSERT INTO turma_alunos (turma_id, aluno_id) VALUES (?, ?)',
+            [turmaId, alunoId]
+        );
+        ok(`Aluno adicionado à turma "${TURMA.nome}"`);
+    }
+
+    // 5. Trilha
+    console.log('\n📚 Trilha...');
+    let trilhaId;
+    const [trilhasExist] = await banco.query(
+        'SELECT id FROM trilhas WHERE turma_id = ? AND titulo = ? LIMIT 1',
+        [turmaId, TRILHA.titulo]
+    );
+    if (trilhasExist.length) {
+        trilhaId = trilhasExist[0].id;
+        skip(`Trilha já existe (id=${trilhaId})`);
+    } else {
+        const [res] = await banco.query(
+            'INSERT INTO trilhas (turma_id, professor_id, titulo, disciplina, descricao) VALUES (?, ?, ?, ?, ?)',
+            [turmaId, professorId, TRILHA.titulo, TRILHA.disciplina, TRILHA.descricao]
+        );
+        trilhaId = res.insertId;
+        ok(`Trilha criada (id=${trilhaId}) — "${TRILHA.titulo}"`);
+    }
+
+    const etapaIds = [];
+    for (const etapa of TRILHA.etapas) {
+        const [eExist] = await banco.query(
+            'SELECT id FROM trilha_etapas WHERE trilha_id = ? AND ordem = ? LIMIT 1',
+            [trilhaId, etapa.ordem]
+        );
+        if (eExist.length) {
+            etapaIds.push(eExist[0].id);
+            skip(`  Etapa ${etapa.ordem} já existe`);
+        } else {
+            const [res] = await banco.query(
+                'INSERT INTO trilha_etapas (trilha_id, ordem, titulo, tipo, conteudo) VALUES (?, ?, ?, ?, ?)',
+                [trilhaId, etapa.ordem, etapa.titulo, etapa.tipo, etapa.conteudo]
+            );
+            etapaIds.push(res.insertId);
+            log(`  ➕ Etapa ${etapa.ordem} (${etapa.tipo}): "${etapa.titulo}"`);
+        }
+    }
+
+    // Aluno conclui as 3 primeiras etapas (progresso real no dashboard)
+    for (let i = 0; i < 3 && i < etapaIds.length; i++) {
+        await banco.query(
+            `INSERT IGNORE INTO progresso_etapa (aluno_id, etapa_id, concluido, concluido_em)
+             VALUES (?, ?, 1, NOW() - INTERVAL ? DAY)`,
+            [alunoId, etapaIds[i], 2 - i]
+        );
+    }
+    ok('Progresso do aluno: etapas 1–3 concluídas');
+
+    // 6. Respostas do aluno na 1ª atividade (para aparecer no histórico)
+    console.log('\n📋 Respostas do aluno (Atividade 1)...');
+    const [questoesAtiv1] = await banco.query(
+        'SELECT id, ordem, tipo, gabarito FROM questoes WHERE atividade_id = 1 AND tipo = "multipla_escolha" ORDER BY ordem'
+    );
+
+    // Aluno responde corretamente as questões 1 e 3, erra a 2
+    const respostasSimuladas = { 1: 'a', 2: 'c', 3: 'c' };
+    for (const q of questoesAtiv1) {
+        const resposta = respostasSimuladas[q.ordem] || q.gabarito;
+        const correta = resposta === q.gabarito ? 1 : 0;
+        await banco.query(
+            `INSERT IGNORE INTO respostas_questao (aluno_id, questao_id, resposta, correta)
+             VALUES (?, ?, ?, ?)`,
+            [alunoId, q.id, resposta, correta]
+        );
+        const icone = correta ? '✅' : '❌';
+        log(`  ${icone} Questão ${q.ordem}: respondeu "${resposta}" (gabarito: "${q.gabarito}")`);
+    }
+
     console.log('\n✅ Seed concluído!\n');
     console.log('┌─────────────────────────────────────────────────────────┐');
     console.log('│  CREDENCIAIS DE DEMO                                    │');
     console.log('├─────────────────────────────────────────────────────────┤');
     console.log(`│  Professor: ${PROFESSOR.email.padEnd(42)} │`);
     console.log(`│  Senha:     ${PROFESSOR.senha.padEnd(42)} │`);
+    console.log('├─────────────────────────────────────────────────────────┤');
+    console.log(`│  Aluno:     ${ALUNO.email.padEnd(42)} │`);
+    console.log(`│  Senha:     ${ALUNO.senha.padEnd(42)} │`);
+    console.log('├─────────────────────────────────────────────────────────┤');
     console.log(`│  Código da turma: ${TURMA.codigo.padEnd(36)} │`);
     console.log('└─────────────────────────────────────────────────────────┘\n');
 
