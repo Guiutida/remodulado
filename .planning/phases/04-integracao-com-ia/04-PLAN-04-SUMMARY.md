@@ -116,7 +116,7 @@ Nenhum — trilhas-ia.js conecta diretamente aos endpoints reais e popularSelect
 - `backend/routes/ia.js` — FOUND
 - `assets/js/trilhas-ia.js` — FOUND
 - `pages/trilhas.html` — FOUND
-- `.planning/04-integracao-com-ia/04-PLAN-04-SUMMARY.md` — FOUND
+- `.planning/phases/04-integracao-com-ia/04-PLAN-04-SUMMARY.md` — FOUND
 - Commit `6483113` (iaController + routes) — FOUND
 - Commit `17ca293` (trilhas-ia.js + trilhas.html) — FOUND
 
