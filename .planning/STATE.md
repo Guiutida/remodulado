@@ -1,29 +1,29 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-status: unknown
-last_updated: "2026-05-23T19:25:13.099Z"
+milestone_name: TCC
+status: complete
+last_updated: "2026-05-26"
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 5
-  completed_plans: 3
-  percent: 0
+  completed_phases: 5
+  total_plans: 23
+  completed_plans: 23
+  percent: 100
 ---
 
 # STATE.md — DuoPratic
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-05-22)
+See: `.planning/PROJECT.md` (updated 2026-05-26)
 
 **Core value:** Alunos aprendem mais, com ritmo próprio e apoio de IA — professores acompanham o progresso sem esforço extra.
-**Current focus:** Phase 5 — Polimento e Deploy
+**Current focus:** Milestone v1.0 SHIPPED — pronto para apresentação do TCC
 
 ## Current Milestone
 
-**v1.0 — TCC**
+**v1.0 — TCC** ✅ SHIPPED 2026-05-26
 Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão de Curso.
 
 ## Phase Status
@@ -34,7 +34,7 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 | Phase 2: Turmas e Trilhas | ✅ Complete |
 | Phase 3: Atividades e Painel do Aluno | ✅ Complete |
 | Phase 4: Integração com IA | ✅ Complete |
-| Phase 5: Polimento e Deploy | 🔄 In Progress |
+| Phase 5: Polimento e Estabilização | ✅ Complete |
 
 ## Active Decisions
 
@@ -44,13 +44,21 @@ Sistema funcional de ponta a ponta para apresentação do Trabalho de Conclusão
 - SSE (Server-Sent Events) para streaming das respostas da IA — sem dependências extras
 - Sem framework frontend — vanilla HTML/CSS/JS mantido por consistência com a base existente
 - multer@2.1.1 via DiskStorage — foto de perfil armazenada em arquivo, não em base64 no banco
+- Deploy removido do escopo v1.0 — railway.json pronto para deploy futuro
+
+## Deferred Items
+
+Items acknowledged and deferred at milestone close on 2026-05-26:
+
+| Category | Item | Status |
+|----------|------|--------|
+| requirement | INFRA-05 — Deploy em URL pública | Gap aceito pelo usuário |
 
 ## Next Step
 
-**Plan 05-04** (Deploy Railway): Tarefa 1 concluída (railway.json + .env.example commitados).
-Aguardando configuração manual no painel Railway (criar conta, MySQL plugin, env vars, gerar URL pública).
+Milestone v1.0 completo. Para iniciar o próximo ciclo:
 
-Quando Railway estiver configurado → retomar com Plan 05-05 (Smoke Test).
+`/gsd-new-milestone`
 
 ---
-*Last updated: 2026-05-23 after Phase 5 Plan 04 Task 1 (railway.json checkpoint pause)*
+*Last updated: 2026-05-26 — v1.0 milestone archived*
